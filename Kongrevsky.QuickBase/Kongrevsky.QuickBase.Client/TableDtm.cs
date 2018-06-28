@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
     public class TableDtm : Dtm
     {

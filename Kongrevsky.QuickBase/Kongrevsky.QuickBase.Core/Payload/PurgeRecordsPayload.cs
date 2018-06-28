@@ -5,11 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class PurgeRecordsPayload : Payload
     {
         private readonly string _query;
@@ -47,17 +48,17 @@ namespace Intuit.QuickBase.Core.Payload
 
         private PurgeRecordsPayload(Builder builder)
         {
-            _query = builder.Query;
-            _qid = builder.Qid;
-            _qname = builder.QName;
+            this._query = builder.Query;
+            this._qid = builder.Qid;
+            this._qname = builder.QName;
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(!String.IsNullOrEmpty(_query) ? String.Format("<query>{0}</query>", _query) : String.Empty);
-            sb.Append(_qid > 0 ? String.Format("<qid>{0}</qid>", _qid) : String.Empty);
-            sb.Append(!String.IsNullOrEmpty(_qname) ? String.Format("<qname>{0}</qname>", _qname) : String.Empty);
+            if (!string.IsNullOrEmpty(this._query)) sb.Append(new XElement("query", this._query));
+            if (this._qid > 0) sb.Append(new XElement("qid", this._qid));
+            if (!string.IsNullOrEmpty(this._qname)) sb.Append(new XElement("qname", this._qname));
             return sb.ToString();
         }
     }

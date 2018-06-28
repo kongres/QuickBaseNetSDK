@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Uri
+namespace Kongrevsky.QuickBase.Core.Uri
 {
+    using System;
+
     internal class QUriDbid : QUri
     {
         private string _dbid;
@@ -22,23 +23,23 @@ namespace Intuit.QuickBase.Core.Uri
 
         private string AccountDomain
         {
-            get { return _accountDomain; }
+            get { return this._accountDomain; }
             set
             {
                 if (value == null) throw new ArgumentNullException("accountDomain");
                 if (value.Trim() == String.Empty) throw new ArgumentException("accountDomain");
-                _accountDomain = value;
+                this._accountDomain = value;
             }
         }
 
         private string Dbid
         {
-            get { return _dbid; }
+            get { return this._dbid; }
             set
             {
                 if (value == null) throw new ArgumentNullException("dbid");
                 if (value.Trim() == String.Empty) throw new ArgumentException("dbid");
-                _dbid = value;
+                this._dbid = value;
             }
         }
 

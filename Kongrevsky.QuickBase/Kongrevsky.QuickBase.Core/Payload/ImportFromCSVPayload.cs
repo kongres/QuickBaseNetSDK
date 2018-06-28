@@ -5,16 +5,18 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class ImportFromCSVPayload : Payload
     {
         private readonly string _recordsCsv;
         private readonly string _cList;
         private readonly bool _skipFirst;
+        private readonly bool _timeInUtc;
 
         internal class Builder
         {
@@ -39,6 +41,13 @@ namespace Intuit.QuickBase.Core.Payload
                 return this;
             }
 
+            internal bool TimeInUtc { get; private set; }
+            internal Builder SetTimeInUtc(bool val)
+            {
+                TimeInUtc = val;
+                return this;
+            }
+
             internal ImportFromCSVPayload Build()
             {
                 return new ImportFromCSVPayload(this);
@@ -47,17 +56,19 @@ namespace Intuit.QuickBase.Core.Payload
 
         private ImportFromCSVPayload(Builder builder)
         {
-            _recordsCsv = builder.RecordsCsv;
-            _cList = builder.CList;
-            _skipFirst = builder.SkipFirst;
+            this._recordsCsv = builder.RecordsCsv;
+            this._cList = builder.CList;
+            this._skipFirst = builder.SkipFirst;
+            this._timeInUtc = builder.TimeInUtc;
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(String.Format("<records_csv><![CDATA[{0}]]></records_csv>", _recordsCsv));
-            sb.Append((!String.IsNullOrEmpty(_cList)) ? String.Format("<clist>{0}</clist>", _cList) : String.Empty);
-            sb.Append(_skipFirst ? "<skipfirst>1</skipfirst>" : String.Empty);
+            sb.Append(new XElement("records_csv", new XCData(this._recordsCsv)));
+            if (!string.IsNullOrEmpty(this._cList)) sb.Append(new XElement("clist", this._cList));
+            if (this._skipFirst) sb.Append(new XElement("skipfirst", 1));
+            if (this._timeInUtc) sb.Append(new XElement("msInUTC", 1));
             return sb.ToString();
         }
     }

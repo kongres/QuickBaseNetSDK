@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
     using System.Collections.Generic;
 
@@ -24,7 +24,7 @@ namespace Intuit.QuickBase.Client
             return _instance;
         }
 
-        internal override IQApplication CreateInstance(IQClient client, string applicationId, string token, List<string> loadTables = null )
+        internal override IQApplication CreateInstance(IQClient client, string applicationId, string token, List<string> loadTables = null)
         {
             var tableFactory = QTableFactory.GetInstance();
             return new QApplication(tableFactory, client, applicationId, token, loadTables);

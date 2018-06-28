@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class GetRoleInfo : IQObject
     {
         private const string QUICKBASE_ACTION = "API_GetRoleInfo";
@@ -19,18 +20,18 @@ namespace Intuit.QuickBase.Core
 
         public GetRoleInfo(string ticket, string appToken, string accountDomain, string dbid)
         {
-            _getRoleInfoPayload = new GetRoleInfoPayload();
-            _getRoleInfoPayload = new ApplicationTicket(_getRoleInfoPayload, ticket);
-            _getRoleInfoPayload = new ApplicationToken(_getRoleInfoPayload, appToken);
-            _getRoleInfoPayload = new WrapPayload(_getRoleInfoPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._getRoleInfoPayload = new GetRoleInfoPayload();
+            this._getRoleInfoPayload = new ApplicationTicket(this._getRoleInfoPayload, ticket);
+            this._getRoleInfoPayload = new ApplicationToken(this._getRoleInfoPayload, appToken);
+            this._getRoleInfoPayload = new WrapPayload(this._getRoleInfoPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _getRoleInfoPayload.GetXmlPayload();
+                return this._getRoleInfoPayload.GetXmlPayload();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

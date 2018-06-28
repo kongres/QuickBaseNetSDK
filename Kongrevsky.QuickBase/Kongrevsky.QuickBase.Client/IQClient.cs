@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Collections.Generic;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System.Collections.Generic;
+
     public interface IQClient
     {
         IQApplication Connect(string applicationId, string token, List<string> loadTables);

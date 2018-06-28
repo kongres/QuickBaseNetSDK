@@ -5,23 +5,24 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class Query
     {
         private readonly List<QueryStrings> _queryStrings = new List<QueryStrings>();
 
         public void Add(QueryStrings query)
         {
-            _queryStrings.Add(query);
+            this._queryStrings.Add(query);
         }
 
         public override string ToString()
         {
-            return _queryStrings.Aggregate(string.Empty, (current, query) => current + query.ToString());
+            return this._queryStrings.Aggregate(string.Empty, (current, query) => current + query.ToString());
         }
     }
 }

@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Net;
-using System.IO;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Exceptions;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.IO;
+    using System.Net;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Exceptions;
+
     internal class Http
     {
         internal XPathDocument Get(IQGetObject apiAction)
@@ -47,8 +48,7 @@ namespace Intuit.QuickBase.Core
             BinaryReader br = null;
             BinaryWriter bw = null;
             WebResponse response = null;
-            Stream responseStream = null;
-            
+
             try
             {
                 // Request
@@ -63,7 +63,7 @@ namespace Intuit.QuickBase.Core
 
                 // Response
                 response = request.GetResponse();
-                responseStream = response.GetResponseStream();
+                var responseStream = response.GetResponseStream();
 
                 // Write file
                 if (!Directory.Exists(downloadFile.Path))
@@ -79,7 +79,6 @@ namespace Intuit.QuickBase.Core
             {
                 if (bw != null) bw.Close();
                 if (br != null) br.Close();
-                if (responseStream != null) responseStream.Close();
                 if (response != null) response.Close();
             }
         }
@@ -282,7 +281,8 @@ namespace Intuit.QuickBase.Core
 
             if ("77".Equals(errorcode))
             {
-                throw new ApiRequestLimitExceededException(errortext);
+                System.DateTime waitUntil = System.DateTime.Now.AddSeconds(5); //I can't find any examples of where the 'wait time' is supposedly included in the error message, so just putting in a 5 sec wait time
+                throw new ApiRequestLimitExceededException(errortext, waitUntil);
             }
 
             if ("80".Equals(errorcode))

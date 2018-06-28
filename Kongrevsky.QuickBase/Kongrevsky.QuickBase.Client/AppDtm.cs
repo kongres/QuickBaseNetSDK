@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Collections.Generic;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System.Collections.Generic;
+
     public class AppDtm : Dtm
     {
         private readonly List<TableDtm> _tableDtm;
@@ -18,7 +19,7 @@ namespace Intuit.QuickBase.Client
         {
             RequestTime = requestTime;
             RequestNextAllowedTime = requestNextAllowedTime;
-            _tableDtm = new List<TableDtm>();
+            this._tableDtm = new List<TableDtm>();
         }
 
         public long RequestTime { get; private set; }
@@ -26,14 +27,14 @@ namespace Intuit.QuickBase.Client
 
         public void AddTable(string dbid, long lastModifiedTime, long lastRecModTime)
         {
-            _tableDtm.Add(new TableDtm(dbid, lastModifiedTime, lastRecModTime));
+            this._tableDtm.Add(new TableDtm(dbid, lastModifiedTime, lastRecModTime));
         }
 
         public List<TableDtm> Tables
         {
             get
             {
-                return _tableDtm;
+                return this._tableDtm;
             }
         }
     }

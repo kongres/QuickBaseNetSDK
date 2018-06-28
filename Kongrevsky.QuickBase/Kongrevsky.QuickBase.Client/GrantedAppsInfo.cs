@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Collections.Generic;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System.Collections.Generic;
+
     public class GrantedAppsInfo : GrantedInfo
     {
         private readonly List<GrantedTablesInfo> _grantedTables;
@@ -16,19 +17,19 @@ namespace Intuit.QuickBase.Client
         public GrantedAppsInfo(string name, string dbid)
             : base(name, dbid)
         {
-            _grantedTables = new List<GrantedTablesInfo>();
+            this._grantedTables = new List<GrantedTablesInfo>();
         }
 
         public void AddTable(string name, string dbid)
         {
-            _grantedTables.Add(new GrantedTablesInfo(name, dbid));
+            this._grantedTables.Add(new GrantedTablesInfo(name, dbid));
         }
 
         public List<GrantedTablesInfo> GrantedTables
         {
             get
             {
-                return _grantedTables;
+                return this._grantedTables;
             }
         }
     }

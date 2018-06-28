@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// You invoke this call on an application-level dbid to change the application name. No dbids, fids, or 
     /// anything other than the application name is affected. You must have administrator rights to call this. 
@@ -32,18 +33,18 @@ namespace Intuit.QuickBase.Core
         /// <param name="newAppName">Supply a new application name.</param>
         public RenameApp(string ticket, string appToken, string accountDomain, string dbid, string newAppName)
         {
-            _renameAppPayload = new RenameAppPayload(newAppName);
-            _renameAppPayload = new ApplicationTicket(_renameAppPayload, ticket);
-            _renameAppPayload = new ApplicationToken(_renameAppPayload, appToken);
-            _renameAppPayload = new WrapPayload(_renameAppPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._renameAppPayload = new RenameAppPayload(newAppName);
+            this._renameAppPayload = new ApplicationTicket(this._renameAppPayload, ticket);
+            this._renameAppPayload = new ApplicationToken(this._renameAppPayload, appToken);
+            this._renameAppPayload = new WrapPayload(this._renameAppPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _renameAppPayload.GetXmlPayload();
+                return this._renameAppPayload.GetXmlPayload();
             }
         }
 
@@ -51,7 +52,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

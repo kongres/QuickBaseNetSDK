@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
     /// <summary>
     /// Specify the QuickBase field type. The eligible type names differ slightly from their 
@@ -127,11 +127,6 @@ namespace Intuit.QuickBase.Core
         /// <summary>
         /// Project predecessor
         /// </summary>
-        predecessor,
-        
-        /// <summary>
-        /// Multi Text
-        /// </summary>
-        multitext
+        predecessor
     }
 }

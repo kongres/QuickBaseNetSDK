@@ -1,4 +1,4 @@
-﻿namespace Intuit.QuickBase.Client
+﻿namespace Kongrevsky.QuickBase.Client
 {
     public class QAddress
     {

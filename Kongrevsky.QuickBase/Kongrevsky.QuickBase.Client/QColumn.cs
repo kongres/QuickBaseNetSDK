@@ -6,18 +6,18 @@
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
 
-using System.Collections.Generic;
-using Intuit.QuickBase.Core;
-
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System.Collections.Generic;
+    using Kongrevsky.QuickBase.Core;
+
     public class QColumn : IQColumn, IQColumn_int
     {
         // Constructors
         internal QColumn()
         {
-            choices = new List<object>();
-            composites = new Dictionary<string, int>();
+            this.choices = new List<object>();
+            this.composites = new Dictionary<string, int>();
         }
 
         public QColumn(string columnName, FieldType columnType) : this()
@@ -80,17 +80,17 @@ namespace Intuit.QuickBase.Client
 
         public object[] GetChoices()
         {
-            return choices.ToArray();
+            return this.choices.ToArray();
         }
 
         public void AddChoice(object obj)
         {
-            choices.Add(obj);
+            this.choices.Add(obj);
         }
 
         public Dictionary<string,int> GetComposites()
         {
-            return composites;
+            return this.composites;
         }
     }
 }

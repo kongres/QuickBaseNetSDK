@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// You invoke this call on \db\main (no dbid) to get a ticket. This call validates 
     /// the supplied user name and password, and, if successful, returns a ticket that 
@@ -59,15 +60,15 @@ namespace Intuit.QuickBase.Core
 
         private void CommonConstruction(Payload.Payload payload, string accountDomain)
         {
-            _authenticatePayload = new WrapPayload(payload);
-            _uri = new QUriMain(accountDomain);
+            this._authenticatePayload = new WrapPayload(payload);
+            this._uri = new QUriMain(accountDomain);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _authenticatePayload.GetXmlPayload();
+                return this._authenticatePayload.GetXmlPayload();
             }
         }
 
@@ -75,7 +76,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

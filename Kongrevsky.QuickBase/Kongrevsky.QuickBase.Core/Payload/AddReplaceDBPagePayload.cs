@@ -5,11 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class AddReplaceDBPagePayload : Payload
     {
         private string _pageName;
@@ -36,22 +38,22 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string PageName
         {
-            get { return _pageName; }
+            get { return this._pageName; }
             set
             {
                 if (value == null) throw new ArgumentNullException("pageName");
                 if (value.Trim() == String.Empty) throw new ArgumentException("pageName");
-                _pageName = value;
+                this._pageName = value;
             }
         }
 
         private int PageId
         {
-            get { return _pageId; }
+            get { return this._pageId; }
             set
             {
                 if (value < 1) throw new ArgumentException("_pageId");
-                _pageId = value;
+                this._pageId = value;
             }
         }
 
@@ -59,22 +61,22 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string PageBody
         {
-            get { return _pageBody; }
+            get { return this._pageBody; }
             set
             {
                 if (value == null) throw new ArgumentNullException("pageBody");
                 if (value.Trim() == String.Empty) throw new ArgumentException("pageBody");
-                _pageBody = value;
+                this._pageBody = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(PageId > 0 ? String.Format("<pageid>{0}</pageid>", PageId) : String.Empty);
-            sb.Append(!String.IsNullOrEmpty(PageName) ? String.Format("<pagename>{0}</pagename>", PageName) : String.Empty);
-            sb.Append(String.Format("<pagetype>{0}</pagetype>", (int)PageType));
-            sb.Append(String.Format("<pagebody>{0}</pagebody>", PageBody));
+            if (PageId > 0) sb.Append(new XElement("pageid", PageId));
+            if (!string.IsNullOrEmpty(PageName)) sb.Append(new XElement("pagename", PageName));
+            sb.Append(new XElement("pagetype", (int)PageType));
+            sb.Append(new XElement("pagebody", PageBody));
             return sb.ToString();
         }
     }

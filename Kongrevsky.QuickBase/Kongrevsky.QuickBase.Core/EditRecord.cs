@@ -5,14 +5,15 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Collections.Generic;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// You can use this to change any of the editable field values in the specified record. Only those fields specified 
     /// are changed; unspecified fields are left unchanged. Unsupported tags: &lt;update_id&gt;&lt;/update_id&gt;, 
@@ -38,24 +39,24 @@ namespace Intuit.QuickBase.Core
             {
                 get
                 {
-                    return _rid;
+                    return this._rid;
                 }
                 set
                 {
                     if (value < 1) throw new ArgumentException("rid");
-                    _rid = value;
+                    this._rid = value;
                 }
             }
             internal List<IField> Fields
             {
                 get
                 {
-                    return _fields;
+                    return this._fields;
                 }
                 set
                 {
                     if (value == null) throw new ArgumentNullException("fields");
-                    _fields = value;
+                    this._fields = value;
                 }
             }
 
@@ -85,6 +86,14 @@ namespace Intuit.QuickBase.Core
                 return this;
             }
 
+            internal bool TimeInUtc { get; private set; }
+
+            public Builder SetTimeInUtc(bool val)
+            {
+                TimeInUtc = val;
+                return this;
+            }
+
             internal bool Fform { get; private set; }
 
             public Builder SetFform(bool val)
@@ -101,22 +110,23 @@ namespace Intuit.QuickBase.Core
 
         private EditRecord(Builder builder)
         {
-            _editRecordPayload = new EditRecordPayload.Builder(builder.Rid, builder.Fields)
+            this._editRecordPayload = new EditRecordPayload.Builder(builder.Rid, builder.Fields)
                 .SetUpdateId(builder.UpdateId)
                 .SetDisprec(builder.Disprec)
+                .SetTimeInUtc(builder.TimeInUtc)
                 .SetFform(builder.Fform)
                 .Build();
-            _editRecordPayload = new ApplicationTicket(_editRecordPayload, builder.Ticket);
-            _editRecordPayload = new ApplicationToken(_editRecordPayload, builder.AppToken);
-            _editRecordPayload = new WrapPayload(_editRecordPayload);
-            _uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+            this._editRecordPayload = new ApplicationTicket(this._editRecordPayload, builder.Ticket);
+            this._editRecordPayload = new ApplicationToken(this._editRecordPayload, builder.AppToken);
+            this._editRecordPayload = new WrapPayload(this._editRecordPayload);
+            this._uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _editRecordPayload.GetXmlPayload();
+                return this._editRecordPayload.GetXmlPayload();
             }
         }
 
@@ -124,7 +134,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

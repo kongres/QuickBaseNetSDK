@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// This call makes a complete clone of the specified source application, schema, 
     /// views, users, and so for. Optionally, using the keepData parameter, you can clone 
@@ -41,13 +42,13 @@ namespace Intuit.QuickBase.Core
             {
                 get
                 {
-                    return _newDBName;
+                    return this._newDBName;
                 }
                 set
                 {
                     if (value == null) throw new ArgumentNullException("newDBName");
                     if (value.Trim() == String.Empty) throw new ArgumentException("newDBName");
-                    _newDBName = value;
+                    this._newDBName = value;
                 }
             }
 
@@ -55,13 +56,13 @@ namespace Intuit.QuickBase.Core
             {
                 get
                 {
-                    return _newDBDesc;
+                    return this._newDBDesc;
                 }
                 set
                 {
                     if (value == null) throw new ArgumentNullException("newDBDesc");
                     if (value.Trim() == String.Empty) throw new ArgumentException("newDBDesc");
-                    _newDBDesc = value;
+                    this._newDBDesc = value;
                 }
             }
 
@@ -99,21 +100,21 @@ namespace Intuit.QuickBase.Core
 
         private CloneDatabase(Builder builder)
         {
-            _cloneDatabasePayload = new CloneDatabasePayload.Builder(builder.NewDBName, builder.NewDBDesc)
+            this._cloneDatabasePayload = new CloneDatabasePayload.Builder(builder.NewDBName, builder.NewDBDesc)
                 .SetKeepData(builder.KeepData)
                 .SetExcludeFiles(builder.ExcludeFiles)
                 .Build();
-            _cloneDatabasePayload = new ApplicationTicket(_cloneDatabasePayload, builder.Ticket);
-            _cloneDatabasePayload = new ApplicationToken(_cloneDatabasePayload, builder.AppToken);
-            _cloneDatabasePayload = new WrapPayload(_cloneDatabasePayload);
-            _uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+            this._cloneDatabasePayload = new ApplicationTicket(this._cloneDatabasePayload, builder.Ticket);
+            this._cloneDatabasePayload = new ApplicationToken(this._cloneDatabasePayload, builder.AppToken);
+            this._cloneDatabasePayload = new WrapPayload(this._cloneDatabasePayload);
+            this._uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _cloneDatabasePayload.GetXmlPayload();
+                return this._cloneDatabasePayload.GetXmlPayload();
             }
         }
 
@@ -121,7 +122,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

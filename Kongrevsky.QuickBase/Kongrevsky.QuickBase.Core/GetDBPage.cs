@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class GetDBPage : IQObject
     {
         private const string QUICKBASE_ACTION = "API_GetDBPage";
@@ -19,18 +20,18 @@ namespace Intuit.QuickBase.Core
 
         public GetDBPage(string ticket, string appToken, string accountDomain, string dbid, int pageId)
         {
-            _getDbPagePayload = new GetDBPagePayload(pageId);
-            _getDbPagePayload = new ApplicationTicket(_getDbPagePayload, ticket);
-            _getDbPagePayload = new ApplicationToken(_getDbPagePayload, appToken);
-            _getDbPagePayload = new WrapPayload(_getDbPagePayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._getDbPagePayload = new GetDBPagePayload(pageId);
+            this._getDbPagePayload = new ApplicationTicket(this._getDbPagePayload, ticket);
+            this._getDbPagePayload = new ApplicationToken(this._getDbPagePayload, appToken);
+            this._getDbPagePayload = new WrapPayload(this._getDbPagePayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _getDbPagePayload.GetXmlPayload();
+                return this._getDbPagePayload.GetXmlPayload();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

@@ -5,10 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Xml.Linq;
+
     internal class ApplicationTicket : PayloadDecorator
     {
         private string _ticket;
@@ -21,18 +23,18 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string Ticket
         {
-            get { return _ticket; }
+            get { return this._ticket; }
             set
             {
                 if (value == null) throw new ArgumentNullException("ticket");
                 if (value.Trim() == String.Empty) throw new ArgumentException("ticket");
-                _ticket = value;
+                this._ticket = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
-            return String.Format("{0}<ticket>{1}</ticket>", Payload.GetXmlPayload(), Ticket);
+            return Payload.GetXmlPayload() + new XElement("ticket", Ticket);
         }
     }
 }

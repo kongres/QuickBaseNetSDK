@@ -5,17 +5,18 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
     using System.Collections.Generic;
+    using System.Xml.XPath;
 
     public interface IQTable
     {
         string TableName { get; }
         string TableId { get; }
         int KeyFID { get; }
+        int KeyCIdx { get; }
         QRecordCollection Records { get; }
         QColumnCollection Columns { get; }
         void Clear();

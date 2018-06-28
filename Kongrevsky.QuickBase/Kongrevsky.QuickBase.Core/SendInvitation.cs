@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class SendInvitation : IQObject
     {
         private const string QUICKBASE_ACTION = "API_SendInvitation";
@@ -29,17 +30,17 @@ namespace Intuit.QuickBase.Core
 
         private void CommonConstruction(string ticket, string appToken, string accountDomain, string dbid, Payload.Payload payload)
         {
-            _sendInvitationPayload = new ApplicationTicket(payload, ticket);
-            _sendInvitationPayload = new ApplicationToken(_sendInvitationPayload, appToken);
-            _sendInvitationPayload = new WrapPayload(_sendInvitationPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._sendInvitationPayload = new ApplicationTicket(payload, ticket);
+            this._sendInvitationPayload = new ApplicationToken(this._sendInvitationPayload, appToken);
+            this._sendInvitationPayload = new WrapPayload(this._sendInvitationPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _sendInvitationPayload.GetXmlPayload();
+                return this._sendInvitationPayload.GetXmlPayload();
             }
         }
 
@@ -47,7 +48,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

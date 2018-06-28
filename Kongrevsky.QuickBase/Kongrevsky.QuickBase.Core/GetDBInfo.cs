@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// You can invoke this on the application-level dbid or on a table-level dbid to get metadata information, 
     /// such as the last time the table was modified. For example, you might use this function to find out if 
@@ -32,18 +33,18 @@ namespace Intuit.QuickBase.Core
         /// <param name="dbid">Supply application-level or table-level dbid.</param>
         public GetDbInfo(string ticket, string appToken, string accountDomain, string dbid)
         {
-            _getDbInfoPayload = new GetDbInfoPayload();
-            _getDbInfoPayload = new ApplicationTicket(_getDbInfoPayload, ticket);
-            _getDbInfoPayload = new ApplicationToken(_getDbInfoPayload, appToken);
-            _getDbInfoPayload = new WrapPayload(_getDbInfoPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._getDbInfoPayload = new GetDbInfoPayload();
+            this._getDbInfoPayload = new ApplicationTicket(this._getDbInfoPayload, ticket);
+            this._getDbInfoPayload = new ApplicationToken(this._getDbInfoPayload, appToken);
+            this._getDbInfoPayload = new WrapPayload(this._getDbInfoPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _getDbInfoPayload.GetXmlPayload();
+                return this._getDbInfoPayload.GetXmlPayload();
             }
         }
 
@@ -51,7 +52,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

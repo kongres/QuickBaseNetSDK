@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Collections.Generic;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class GetAppDtmInfo : IQGetObject
     {
         private const string QUICKBASE_ACTION = "API_GetAppDTMInfo";
@@ -22,12 +23,12 @@ namespace Intuit.QuickBase.Core
         {
             AddParameter("act=", Action);
             AddParameter("dbid=", dbid);
-            _uri = new QUriMain(accountDomain);
+            this._uri = new QUriMain(accountDomain);
         }
 
         public void AddParameter(string name, string value)
         {
-            _map.Add(name, value);
+            this._map.Add(name, value);
         }
 
         public System.Uri Uri
@@ -35,12 +36,12 @@ namespace Intuit.QuickBase.Core
             get
             {
                 var uriParams = String.Empty;
-                foreach(var param in _map)
+                foreach(var param in this._map)
                 {
                     uriParams += param.Key + param.Value + "&";
 
                 }
-                return new System.Uri(_uri.GetQUri() + "?" + uriParams.TrimEnd('&'));
+                return new System.Uri(this._uri.GetQUri() + "?" + uriParams.TrimEnd('&'));
             }
         }
 

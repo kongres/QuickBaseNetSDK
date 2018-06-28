@@ -5,11 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class CloneDatabasePayload : Payload
     {
         private readonly string _newDBName;
@@ -50,19 +51,20 @@ namespace Intuit.QuickBase.Core.Payload
 
         private CloneDatabasePayload(Builder builder)
         {
-            _newDBName = builder.NewDBName;
-            _newDBDesc = builder.NewDBDesc;
-            _keepData = builder.KeepData;
-            _excludeFiles = builder.ExcludeFiles;
+            this._newDBName = builder.NewDBName;
+            this._newDBDesc = builder.NewDBDesc;
+            this._keepData = builder.KeepData;
+            this._excludeFiles = builder.ExcludeFiles;
         }
 
         internal override string GetXmlPayload()
         {
-            var xmlData = new StringBuilder();
-            xmlData.Append(String.Format("<newdbname>{0}</newdbname><newdbdesc>{1}</newdbdesc>", _newDBName, _newDBDesc));
-            xmlData.Append(_keepData ? "<keepData>1</keepData>" : String.Empty);
-            xmlData.Append(_excludeFiles ? "<excludefiles>1</excludefiles>" : String.Empty);
-            return xmlData.ToString();
+            var sb = new StringBuilder();
+            sb.Append(new XElement("newdbname", this._newDBName));
+            sb.Append(new XElement("newdbdesc", this._newDBDesc));
+            if (this._keepData) sb.Append(new XElement("keepData", 1));
+            if (this._excludeFiles) sb.Append(new XElement("excludefiles", 1));
+            return sb.ToString();
         }
     }
 }

@@ -5,11 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text.RegularExpressions;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+
     public class Field : IField
     {
         private int _fid;
@@ -36,11 +36,11 @@ namespace Intuit.QuickBase.Core
 
         public int Fid
         {
-            get { return _fid; }
+            get { return this._fid; }
             private set
             {
                 if (value < 1) throw new ArgumentException("fid");
-                _fid = value;
+                this._fid = value;
             }
         }
 
@@ -50,13 +50,13 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return EncodeSpecialCharacters(_value);
+                return this._value;
             }
             private set
             {
                 if (value == null) throw new ArgumentNullException("value");
                 // Okay for value to be an empty string.  That's how to erase values in QB.
-                _value = value;
+                this._value = value;
             }
         }
 
@@ -64,24 +64,14 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _file;
+                return this._file;
             }
             set
             {
                 if (value == null) throw new ArgumentNullException("file");
                 if (value.Trim() == String.Empty) throw new ArgumentException("file");
-                _file = value;
+                this._file = value;
             }
-        }
-
-        private static string EncodeSpecialCharacters(string strLine)
-        {
-            strLine = Regex.Replace(strLine, "&(?!amp;)", "&amp;");
-            strLine = Regex.Replace(strLine, "<", "&lt;");
-            strLine = Regex.Replace(strLine, ">", "&gt;");
-            strLine = Regex.Replace(strLine, "\"", "&quot;");
-            strLine = Regex.Replace(strLine, "'", "&apos;");
-            return strLine;
         }
     }
 }

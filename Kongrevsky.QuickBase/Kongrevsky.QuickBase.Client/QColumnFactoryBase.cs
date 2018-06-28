@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using Intuit.QuickBase.Core;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using Kongrevsky.QuickBase.Core;
+
     internal abstract class QColumnFactoryBase
     {
         internal abstract IQColumn CreateInstace(int columnId, string columnName, FieldType columnType, bool columnVirtual, bool columnLookup, bool isHidden);

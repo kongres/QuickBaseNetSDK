@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// Returns the number of records in the table. You need to specify a table-level dbid. Unsupported 
     /// tag: &lt;udata&gt;&lt;/udata&gt;
@@ -30,18 +31,18 @@ namespace Intuit.QuickBase.Core
         /// <param name="dbid">Supply table-level dbid.</param>
         public GetNumRecords(string ticket, string appToken, string accountDomain, string dbid)
         {
-            _getNumRecordsPayload = new GetNumRecordsPayload();
-            _getNumRecordsPayload = new ApplicationTicket(_getNumRecordsPayload, ticket);
-            _getNumRecordsPayload = new ApplicationToken(_getNumRecordsPayload, appToken);
-            _getNumRecordsPayload = new WrapPayload(_getNumRecordsPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._getNumRecordsPayload = new GetNumRecordsPayload();
+            this._getNumRecordsPayload = new ApplicationTicket(this._getNumRecordsPayload, ticket);
+            this._getNumRecordsPayload = new ApplicationToken(this._getNumRecordsPayload, appToken);
+            this._getNumRecordsPayload = new WrapPayload(this._getNumRecordsPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _getNumRecordsPayload.GetXmlPayload();
+                return this._getNumRecordsPayload.GetXmlPayload();
             }
         }
 
@@ -49,7 +50,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

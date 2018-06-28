@@ -6,14 +6,16 @@
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core;
-
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core;
+    using Kongrevsky.QuickBase.Core.Exceptions;
+
     public class QTable : IQTable
     {
         // Constructors
@@ -35,6 +37,7 @@ namespace Intuit.QuickBase.Client
             TableName = tableName;
             RecordNames = pNoun;
             CommonConstruction(columnFactory, recordFactory, application, tableId);
+            RefreshColumns(); //grab basic columns that QB automatically makes
         }
 
         private void CommonConstruction(QColumnFactoryBase columnFactory, QRecordFactoryBase recordFactory, IQApplication application, string tableId)
@@ -43,9 +46,10 @@ namespace Intuit.QuickBase.Client
             RecordFactory = recordFactory;
             Application = application;
             TableId = tableId;
-            KeyFID = -1;
             Records = new QRecordCollection(Application, this);
             Columns = new QColumnCollection(Application, this);
+            KeyFID = -1;
+            KeyCIdx = -1;
         }
 
         // Properties
@@ -66,6 +70,11 @@ namespace Intuit.QuickBase.Client
         private QRecordFactoryBase RecordFactory { get; set; }
 
         public int KeyFID { get; private set; }
+
+        public int KeyCIdx { get; private set; }
+
+        private static readonly string[] QuerySeparator = {"}OR{"};
+        private static readonly Regex QueryCheckRegex = new Regex(@"[\)}]AND[\({]");
 
         // Methods
         public void Clear()
@@ -166,15 +175,136 @@ namespace Intuit.QuickBase.Client
             return int.Parse(xml.SelectSingleNode("/qdbapi/num_records").Value);
         }
 
+        private void _doQuery(DoQuery qry, bool isClearOldRecords = true)
+        {
+            if (isClearOldRecords)
+                Records.Clear();
+            try
+            {
+                XPathNavigator xml = qry.Post().CreateNavigator();
+                LoadColumns(xml); //In case the schema changes due to another user, or from a previous query that has a differing subset of columns TODO: remove this requirement
+                LoadRecords(xml);
+            }
+            catch (TooManyCriteriaInQueryException)
+            {
+                //If and only if all elements of a query are OR operations, we can split the query in 99 element chunks
+                string query = qry.Query;
+                if (string.IsNullOrEmpty(query) || QueryCheckRegex.IsMatch(query))
+                    throw;
+                string[] args = query.Split(QuerySeparator, StringSplitOptions.None);
+                int argCnt = args.Length;
+                if (argCnt < 100) //We've no idea how to split this, apparently...
+                    throw;
+                if (args[0].StartsWith("{")) args[0] = args[0].Substring(1); //remove leading {
+                if (args[argCnt = 1].EndsWith("}")) args[argCnt - 1] = args[argCnt - 1].Substring(0, args[argCnt - 1].Length - 1); // remove trailing }
+                int sentArgs = 0;
+                while (sentArgs < argCnt)
+                {
+                    int useArgs = Math.Min(99, argCnt - sentArgs);
+                    string[] argsToSend = args.Skip(sentArgs).Take(useArgs).ToArray();
+                    string sendQuery = "{" + string.Join("}OR{", argsToSend) + "}";
+                    DoQuery dqry = new DoQuery.Builder(Application.Client.Ticket, Application.Token, Application.Client.AccountDomain, TableId)
+                        .SetQuery(sendQuery)
+                        .SetCList(qry.Collist)
+                        .SetOptions(qry.Options)
+                        .SetFmt(true)
+                        .Build();
+                    XPathNavigator xml = dqry.Post().CreateNavigator();
+                    if (sentArgs == 0) LoadColumns(xml);
+                    LoadRecords(xml);
+                    sentArgs += useArgs;
+                }
+            }
+            catch (ViewTooLargeException)
+            {
+                //split into smaller queries automagically
+                List<string> optionsList = new List<string>();
+                string query = qry.Query;
+                string collist = qry.Collist;
+                int maxCount = 0;
+                int baseSkip = 0;
+                if (!string.IsNullOrEmpty(qry.Options))
+                {
+                    string[] optArry = qry.Options.Split('.');
+                    foreach (string opt in optArry)
+                    {
+                        if (opt.StartsWith("num-"))
+                        {
+                            maxCount = int.Parse(opt.Substring(4));
+                        }
+                        else if (opt.StartsWith("skp-"))
+                        {
+                            baseSkip = int.Parse(opt.Substring(4));
+                        }
+                        else
+                        {
+                            optionsList.Add(opt);
+                        }
+                    }
+                }
+                if (maxCount == 0)
+                {
+                    DoQueryCount dqryCnt;
+                    if (string.IsNullOrEmpty(query))
+                        dqryCnt = new DoQueryCount.Builder(Application.Client.Ticket, Application.Token, Application.Client.AccountDomain, TableId)
+                            .Build();
+                    else
+                        dqryCnt = new DoQueryCount.Builder(Application.Client.Ticket, Application.Token, Application.Client.AccountDomain, TableId)
+                            .SetQuery(query)
+                            .Build();
+                    var cntXml = dqryCnt.Post().CreateNavigator();
+                    maxCount = int.Parse(cntXml.SelectSingleNode("/qdbapi/numMatches").Value);
+                }
+                int stride = maxCount / 2;
+                int fetched = 0;
+                while (fetched < maxCount)
+                {
+                    List<string> optLst = new List<string>();
+                    optLst.AddRange(optionsList);
+                    optLst.Add("skp-" + (fetched + baseSkip));
+                    optLst.Add("num-" + stride);
+                    string options = string.Join(".", optLst);
+                    DoQuery dqry;
+                    if (string.IsNullOrEmpty(query))
+                        dqry = new DoQuery.Builder(Application.Client.Ticket, Application.Token, Application.Client.AccountDomain, TableId)
+                            .SetCList(collist)
+                            .SetOptions(options)
+                            .SetFmt(true)
+                            .Build();
+                    else
+                        dqry = new DoQuery.Builder(Application.Client.Ticket, Application.Token, Application.Client.AccountDomain, TableId)
+                            .SetQuery(query)
+                            .SetCList(collist)
+                            .SetOptions(options)
+                            .SetFmt(true)
+                            .Build();
+                    try
+                    {
+                        XPathNavigator xml = dqry.Post().CreateNavigator();
+                        if (fetched == 0) LoadColumns(xml);
+                        LoadRecords(xml);
+                        fetched += stride;
+                    }
+                    catch (ViewTooLargeException)
+                    {
+                        stride = stride / 2;
+                    }
+                    catch (ApiRequestLimitExceededException ex)
+                    {
+                        TimeSpan waitTime = ex.WaitUntil - DateTime.Now;
+                        System.Threading.Thread.Sleep(waitTime);
+                    }
+                }
+            }
+        }
+
         public void Query()
         {
             var doQuery = new DoQuery.Builder(Application.Client.Ticket, Application.Token, Application.Client.AccountDomain, TableId)
                 .SetCList("a")
                 .SetFmt(true)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml); //Must be done each time, incase the schema changes due to another user, or from a previous query that has a difering subset of columns
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void Query(string options)
@@ -184,9 +314,7 @@ namespace Intuit.QuickBase.Client
                 .SetFmt(true)
                 .SetOptions(options)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void Query(int[] clist)
@@ -197,9 +325,7 @@ namespace Intuit.QuickBase.Client
                 .SetCList(colList)
                 .SetFmt(true)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void Query(int[] clist, string options)
@@ -211,9 +337,7 @@ namespace Intuit.QuickBase.Client
                 .SetOptions(options)
                 .SetFmt(true)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void QueryPaged(int[] clist, int pageSize)
@@ -229,9 +353,7 @@ namespace Intuit.QuickBase.Client
                         .SetOptions($"num-{pageSize}.skp-{pageSize * i}")
                         .SetFmt(true)
                         .Build();
-                var xml = doQuery.Post().CreateNavigator();
-                LoadColumns(xml);
-                LoadRecords(xml, false);
+                _doQuery(doQuery, false);
             }
         }
 
@@ -256,9 +378,7 @@ namespace Intuit.QuickBase.Client
                         .SetCList(colList)
                         .SetFmt(true)
                         .Build();
-                var xml = doQuery.Post().CreateNavigator();
-                LoadColumns(xml);
-                LoadRecords(xml, false);
+                _doQuery(doQuery, false);
             }
         }
 
@@ -274,9 +394,7 @@ namespace Intuit.QuickBase.Client
                 .SetCList("a")
                 .SetFmt(true)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void Query(Query query, string options)
@@ -287,9 +405,7 @@ namespace Intuit.QuickBase.Client
                 .SetOptions(options)
                 .SetFmt(true)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void Query(Query query, int[] clist)
@@ -301,9 +417,7 @@ namespace Intuit.QuickBase.Client
                 .SetCList(colList)
                 .SetFmt(true)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void Query(Query query, int[] clist, int[] slist)
@@ -317,9 +431,7 @@ namespace Intuit.QuickBase.Client
                 .SetSList(solList)
                 .SetFmt(true)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void Query(Query query, int[] clist, int[] slist, string options)
@@ -334,9 +446,7 @@ namespace Intuit.QuickBase.Client
                 .SetOptions(options)
                 .SetFmt(true)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void Query(int queryId)
@@ -345,9 +455,7 @@ namespace Intuit.QuickBase.Client
                 .SetQid(queryId)
                 .SetFmt(true)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public void Query(int queryId, string options)
@@ -357,9 +465,7 @@ namespace Intuit.QuickBase.Client
                 .SetFmt(true)
                 .SetOptions(options)
                 .Build();
-            var xml = doQuery.Post().CreateNavigator();
-            LoadColumns(xml);
-            LoadRecords(xml);
+            _doQuery(doQuery);
         }
 
         public int QueryCount(Query query)
@@ -409,14 +515,16 @@ namespace Intuit.QuickBase.Client
         {
             Records.RemoveRecords();
             //optimize record uploads
-            List<IQRecord> addList = Records.Where(record => record.RecordState == RecordState.New).ToList();
-            List<IQRecord> modList = Records.Where(record => record.RecordState == RecordState.Modified).ToList();
+            List<IQRecord> addList = Records.Where(record => record.RecordState == RecordState.New && record.UncleanState == false).ToList();
+            List<IQRecord> modList = Records.Where(record => record.RecordState == RecordState.Modified && record.UncleanState == false).ToList();
+            List<IQRecord> uncleanList = Records.Where(record => record.UncleanState).ToList();
             int acnt = addList.Count;
             int mcnt = modList.Count;
-            if (acnt + mcnt > 0)
+            bool hasFileColumn = Columns.Any(c => c.ColumnType == FieldType.file);
+            if (!hasFileColumn && (acnt + mcnt > 0))  // if no file-type columns involved, use csv upload method for reducing API calls and speeding processing.
             {
                 List<String> csvLines = new List<string>(acnt + mcnt);
-                String clist = String.Join(".", KeyFID == -1 ? Columns.Where(col => (col.ColumnVirtual == false && col.ColumnLookup == false) || col.ColumnName == "Record ID#").Select(col => col.ColumnId.ToString())
+                String clist = String.Join(".", KeyFID == -1 ? Columns.Where(col => (col.ColumnVirtual == false && col.ColumnLookup == false) || col.ColumnType == FieldType.recordid).Select(col => col.ColumnId.ToString())
                                                              : Columns.Where(col => (col.ColumnVirtual == false && col.ColumnLookup == false) || col.ColumnId == KeyFID).Select(col => col.ColumnId.ToString()));
                 if (acnt > 0)
                 {
@@ -429,6 +537,7 @@ namespace Intuit.QuickBase.Client
                 var csvBuilder = new ImportFromCSV.Builder(Application.Client.Ticket, Application.Token,
                     Application.Client.AccountDomain, TableId, String.Join("\r\n", csvLines.ToArray()));
                 csvBuilder.SetCList(clist);
+                csvBuilder.SetTimeInUtc(true);
                 var csvUpload = csvBuilder.Build();
 
                 var xml = csvUpload.Post().CreateNavigator();
@@ -438,13 +547,22 @@ namespace Intuit.QuickBase.Client
                 foreach (IQRecord rec in addList)
                 {
                     xNodes.MoveNext();
-                    ((IQRecord_int)rec).ForceUpdateState(Int32.Parse(xNodes.Current.Value));
+                    ((IQRecord_int)rec).ForceUpdateState(Int32.Parse(xNodes.Current.Value)); //set in-memory recordid to new server value
                 }
                 foreach (IQRecord rec in modList)
                 {
                     ((IQRecord_int)rec).ForceUpdateState();
                 }
             }
+            else
+            {
+                foreach (IQRecord rec in addList)
+                    rec.AcceptChanges();
+                foreach (IQRecord rec in modList)
+                    rec.AcceptChanges();
+            }
+            foreach (IQRecord rec in uncleanList)
+                rec.AcceptChanges();
         }
 
         public IQRecord NewRecord()
@@ -463,10 +581,8 @@ namespace Intuit.QuickBase.Client
             RefreshColumns();
         }
 
-        private void LoadRecords(XPathNavigator xml, bool isClearOldRecords = true)
+        private void LoadRecords(XPathNavigator xml)
         {
-            if(isClearOldRecords)
-                Records.Clear();
             var recordNodes = xml.Select("/qdbapi/table/records/record");
             foreach (XPathNavigator recordNode in recordNodes)
             {
@@ -483,8 +599,6 @@ namespace Intuit.QuickBase.Client
         private void LoadColumns(XPathNavigator xml)
         {
             Columns.Clear();
-            var keyFidNode = xml.SelectSingleNode("/qdbapi/table/original/key_fid");
-            if (keyFidNode != null) { KeyFID = keyFidNode.ValueAsInt; }
             var columnNodes = xml.Select("/qdbapi/table/fields/field");
             foreach (XPathNavigator columnNode in columnNodes)
             {
@@ -519,6 +633,12 @@ namespace Intuit.QuickBase.Client
                 }
                 Columns.Add(col);
             }
+            var keyFidNode = xml.SelectSingleNode("/qdbapi/table/original/key_fid");
+            if (keyFidNode != null)
+                KeyFID = keyFidNode.ValueAsInt;
+            else
+                KeyFID = Columns.Find(c => c.ColumnType == FieldType.recordid).ColumnId;
+            KeyCIdx = Columns.FindIndex(c => c.ColumnId == KeyFID);
         }
 
         private static string GetColumnList(ICollection<int> clist)

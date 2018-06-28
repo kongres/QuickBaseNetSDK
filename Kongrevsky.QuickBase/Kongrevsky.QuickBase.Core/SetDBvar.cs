@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class SetDBvar : IQObject
     {
         private const string QUICKBASE_ACTION = "API_SetDBVar";
@@ -19,18 +20,18 @@ namespace Intuit.QuickBase.Core
 
         public SetDBvar(string ticket, string appToken, string accountDomain, string dbid, string varName, string value)
         {
-            _setDbVarPayload = new SetDBvarPayload(varName, value);
-            _setDbVarPayload = new ApplicationTicket(_setDbVarPayload, ticket);
-            _setDbVarPayload = new ApplicationToken(_setDbVarPayload, appToken);
-            _setDbVarPayload = new WrapPayload(_setDbVarPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._setDbVarPayload = new SetDBvarPayload(varName, value);
+            this._setDbVarPayload = new ApplicationTicket(this._setDbVarPayload, ticket);
+            this._setDbVarPayload = new ApplicationToken(this._setDbVarPayload, appToken);
+            this._setDbVarPayload = new WrapPayload(this._setDbVarPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _setDbVarPayload.GetXmlPayload();
+                return this._setDbVarPayload.GetXmlPayload();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

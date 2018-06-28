@@ -5,11 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class CreateDatabasePayload : Payload
     {
         private string _dbName;
@@ -24,23 +26,23 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string DbName
         {
-            get { return _dbName; }
+            get { return this._dbName; }
             set
             {
                 if (value == null) throw new ArgumentNullException("dbName");
                 if (value.Trim() == String.Empty) throw new ArgumentException("dbName");
-                _dbName = value;
+                this._dbName = value;
             }
         }
 
         private string DBDesc
         {
-            get { return _dbDesc; }
+            get { return this._dbDesc; }
             set
             {
                 if (value == null) throw new ArgumentNullException("dbDesc");
                 if (value.Trim() == String.Empty) throw new ArgumentException("dbDesc");
-                _dbDesc = value;
+                this._dbDesc = value;
             }
         }
 
@@ -48,10 +50,11 @@ namespace Intuit.QuickBase.Core.Payload
 
         internal override string GetXmlPayload()
         {
-            var xmlData = new StringBuilder();
-            xmlData.Append(String.Format("<dbname>{0}</dbname><dbdesc>{1}</dbdesc>", DbName, DBDesc));
-            xmlData.Append(CreateAppToken ? "<createapptoken>1</createapptoken>" : String.Empty);
-            return xmlData.ToString();
+            var sb = new StringBuilder();
+            sb.Append(new XElement("dbname", DbName));
+            sb.Append(new XElement("dbdesc", DBDesc));
+            if (CreateAppToken) sb.Append(new XElement("createapptoken", 1));
+            return sb.ToString();
         }
     }
 }

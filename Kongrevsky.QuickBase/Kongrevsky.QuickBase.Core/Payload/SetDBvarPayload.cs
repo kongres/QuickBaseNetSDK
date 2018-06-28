@@ -5,10 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class SetDBvarPayload : Payload
     {
         private string _varName;
@@ -22,18 +25,18 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string VarName
         {
-            get { return _varName; }
+            get { return this._varName; }
             set
             {
                 if (value == null) throw new ArgumentNullException("varName");
                 if (value.Trim() == String.Empty) throw new ArgumentException("varName");
-                _varName = value;
+                this._varName = value;
             }
         }
 
         private string Value
         {
-            get { return _value; }
+            get { return this._value; }
             set
             {
                 if (value == null) throw new ArgumentNullException("value");
@@ -44,7 +47,10 @@ namespace Intuit.QuickBase.Core.Payload
 
         internal override string GetXmlPayload()
         {
-            return String.Format("<varname>{0}</varname><value>{1}</value>", VarName, Value);
+            StringBuilder sb = new StringBuilder();
+            sb.Append(new XElement("varname", VarName));
+            sb.Append(new XElement("value", Value));
+            return sb.ToString();
         }
     }
 }

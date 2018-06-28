@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
-using System.Xml.Linq;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class AuthenticatePayload : Payload
     {
         private string _username;
@@ -31,33 +32,33 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string Username
         {
-            get { return _username; }
+            get { return this._username; }
             set
             {
                 if (value == null) throw new ArgumentNullException("username");
                 if (value.Trim() == String.Empty) throw new ArgumentException("username");
-                _username = value;
+                this._username = value;
             }
         }
 
         private string Password
         {
-            get { return _password; }
+            get { return this._password; }
             set
             {
                 if (value == null) throw new ArgumentNullException("password");
                 if (value.Trim() == String.Empty) throw new ArgumentException("password");
-                _password = value;
+                this._password = value;
             }
         }
 
         private int Hours
         {
-            get { return _hours; }
+            get { return this._hours; }
             set
             {
                 if (value < 0) throw new ArgumentException("hours");
-                _hours = value;
+                this._hours = value;
             }
         }
 

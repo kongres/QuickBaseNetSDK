@@ -5,19 +5,23 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Exceptions
+namespace Kongrevsky.QuickBase.Core.Exceptions
 {
+    using System;
+
     public class ApiRequestLimitExceededException : Exception
     {
         public ApiRequestLimitExceededException() { }
 
-        public ApiRequestLimitExceededException(string message)
+        public ApiRequestLimitExceededException(string message, DateTime waitUntil)
         {
             Message = message;
+            WaitUntil = waitUntil;
         }
 
-        public new string Message { get; set; }
+        public new string Message { get; private set; }
+
+        public DateTime WaitUntil { get; private set; }
     }
 }

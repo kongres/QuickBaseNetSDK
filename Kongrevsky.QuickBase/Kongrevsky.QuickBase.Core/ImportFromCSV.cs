@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class ImportFromCSV : IQObject
     {
         private const string QUICKBASE_ACTION = "API_ImportFromCSV";
@@ -30,13 +31,13 @@ namespace Intuit.QuickBase.Core
             {
                 get
                 {
-                    return _recordsCsv;
+                    return this._recordsCsv;
                 }
                 set
                 {
                     if (value == null) throw new ArgumentNullException("recordsCsv");
                     if (value.Trim() == String.Empty) throw new ArgumentException("recordsCsv");
-                    _recordsCsv = value;
+                    this._recordsCsv = value;
                 }
             }
 
@@ -67,6 +68,14 @@ namespace Intuit.QuickBase.Core
                 return this;
             }
 
+            internal bool TimeInUtc { get; private set; }
+
+            public Builder SetTimeInUtc(bool val)
+            {
+                TimeInUtc = val;
+                return this;
+            }
+
             public ImportFromCSV Build()
             {
                 return new ImportFromCSV(this);
@@ -75,21 +84,22 @@ namespace Intuit.QuickBase.Core
 
         private ImportFromCSV(Builder builder)
         {
-            _importFromCSVPayload = new ImportFromCSVPayload.Builder(builder.RecordsCsv)
+            this._importFromCSVPayload = new ImportFromCSVPayload.Builder(builder.RecordsCsv)
                 .SetCList(builder.CList)
                 .SetSkipFirst(builder.SkipFirst)
+                .SetTimeInUtc(builder.TimeInUtc)
                 .Build();
-            _importFromCSVPayload = new ApplicationTicket(_importFromCSVPayload, builder.Ticket);
-            _importFromCSVPayload = new ApplicationToken(_importFromCSVPayload, builder.AppToken);
-            _importFromCSVPayload = new WrapPayload(_importFromCSVPayload);
-            _uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+            this._importFromCSVPayload = new ApplicationTicket(this._importFromCSVPayload, builder.Ticket);
+            this._importFromCSVPayload = new ApplicationToken(this._importFromCSVPayload, builder.AppToken);
+            this._importFromCSVPayload = new WrapPayload(this._importFromCSVPayload);
+            this._uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _importFromCSVPayload.GetXmlPayload();
+                return this._importFromCSVPayload.GetXmlPayload();
             }
         }
 
@@ -97,7 +107,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

@@ -5,14 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Collections.Generic;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System;
+    using System.Collections.Generic;
     using System.Threading;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core;
 
     public enum CreateApplicationToken
     {

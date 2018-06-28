@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class GetUserRole : IQObject
     {
         private const string QUICKBASE_ACTION = "API_GetUserRole";
@@ -19,18 +20,18 @@ namespace Intuit.QuickBase.Core
 
         public GetUserRole(string ticket, string appToken, string accountDomain, string dbid, string userId)
         {
-            _getUserRolePayload = new GetUserRolePayload(userId);
-            _getUserRolePayload = new ApplicationTicket(_getUserRolePayload, ticket);
-            _getUserRolePayload = new ApplicationToken(_getUserRolePayload, appToken);
-            _getUserRolePayload = new WrapPayload(_getUserRolePayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._getUserRolePayload = new GetUserRolePayload(userId);
+            this._getUserRolePayload = new ApplicationTicket(this._getUserRolePayload, ticket);
+            this._getUserRolePayload = new ApplicationToken(this._getUserRolePayload, appToken);
+            this._getUserRolePayload = new WrapPayload(this._getUserRolePayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _getUserRolePayload.GetXmlPayload();
+                return this._getUserRolePayload.GetXmlPayload();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

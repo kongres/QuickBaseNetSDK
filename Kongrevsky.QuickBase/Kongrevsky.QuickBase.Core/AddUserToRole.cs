@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class AddUserToRole : IQObject
     {
         private const string QUICKBASE_ACTION = "API_AddUserToRole";
@@ -19,18 +20,18 @@ namespace Intuit.QuickBase.Core
 
         public AddUserToRole(string ticket, string appToken, string accountDomain, string dbid, string userId, int roleId)
         {
-            _addUserToRolePayload = new AddUserToRolePayload(userId, roleId);
-            _addUserToRolePayload = new ApplicationTicket(_addUserToRolePayload, ticket);
-            _addUserToRolePayload = new ApplicationToken(_addUserToRolePayload, appToken);
-            _addUserToRolePayload = new WrapPayload(_addUserToRolePayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._addUserToRolePayload = new AddUserToRolePayload(userId, roleId);
+            this._addUserToRolePayload = new ApplicationTicket(this._addUserToRolePayload, ticket);
+            this._addUserToRolePayload = new ApplicationToken(this._addUserToRolePayload, appToken);
+            this._addUserToRolePayload = new WrapPayload(this._addUserToRolePayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _addUserToRolePayload.GetXmlPayload();
+                return this._addUserToRolePayload.GetXmlPayload();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

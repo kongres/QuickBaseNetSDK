@@ -5,10 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Xml.Linq;
+
     internal class RenameAppPayload : Payload
     {
         private string _newAppName;
@@ -20,18 +22,18 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string NewAppName
         {
-            get { return _newAppName; }
+            get { return this._newAppName; }
             set
             {
                 if (value == null) throw new ArgumentNullException("newAppName");
                 if (value.Trim() == String.Empty) throw new ArgumentException("newAppName");
-                _newAppName = value;
+                this._newAppName = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
-            return String.Format("<newappname>{0}</newappname>", NewAppName);
+            return new XElement("newappname", NewAppName).ToString();
         }
     }
 }

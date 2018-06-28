@@ -5,10 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Xml.Linq;
+
     internal class DeleteFieldPayload : Payload
     {
         private int _fid;
@@ -20,17 +22,17 @@ namespace Intuit.QuickBase.Core.Payload
 
         private int Fid
         {
-            get { return _fid; }
+            get { return this._fid; }
             set
             {
                 if (value < 1) throw new ArgumentException("fid");
-                _fid = value;
+                this._fid = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
-            return String.Format("<fid>{0}</fid>", Fid);
+            return new XElement("fid", Fid).ToString();
         }
     }
 }

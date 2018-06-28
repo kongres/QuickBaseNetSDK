@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class ProvisionUser : IQObject
     {
         private const string QUICKBASE_ACTION = "API_ProvisionUser";
@@ -29,18 +30,18 @@ namespace Intuit.QuickBase.Core
 
         private void CommonConstruction(string ticket, string appToken, string accountDomain, string dbid, Payload.Payload payload)
         {
-            _provisionUserPayload = new ApplicationTicket(payload, ticket);
-            _provisionUserPayload = new ApplicationToken(_provisionUserPayload, appToken);
-            _provisionUserPayload = new WrapPayload(_provisionUserPayload);
+            this._provisionUserPayload = new ApplicationTicket(payload, ticket);
+            this._provisionUserPayload = new ApplicationToken(this._provisionUserPayload, appToken);
+            this._provisionUserPayload = new WrapPayload(this._provisionUserPayload);
 
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _provisionUserPayload.GetXmlPayload();
+                return this._provisionUserPayload.GetXmlPayload();
             }
         }
 
@@ -48,7 +49,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

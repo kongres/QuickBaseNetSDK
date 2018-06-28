@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class RemoveUserFromRole : IQObject
     {
         private const string QUICKBASE_ACTION = "API_RemoveUserFromRole";
@@ -19,18 +20,18 @@ namespace Intuit.QuickBase.Core
 
         public RemoveUserFromRole(string ticket, string appToken, string accountDomain, string dbid, string userId, int roleId)
         {
-            _removeUserFromRolePayload = new RemoveUserFromRolePayload(userId, roleId);
-            _removeUserFromRolePayload = new ApplicationTicket(_removeUserFromRolePayload, ticket);
-            _removeUserFromRolePayload = new ApplicationToken(_removeUserFromRolePayload, appToken);
-            _removeUserFromRolePayload = new WrapPayload(_removeUserFromRolePayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._removeUserFromRolePayload = new RemoveUserFromRolePayload(userId, roleId);
+            this._removeUserFromRolePayload = new ApplicationTicket(this._removeUserFromRolePayload, ticket);
+            this._removeUserFromRolePayload = new ApplicationToken(this._removeUserFromRolePayload, appToken);
+            this._removeUserFromRolePayload = new WrapPayload(this._removeUserFromRolePayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _removeUserFromRolePayload.GetXmlPayload();
+                return this._removeUserFromRolePayload.GetXmlPayload();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

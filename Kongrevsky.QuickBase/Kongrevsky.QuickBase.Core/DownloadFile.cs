@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+
     public class DownloadFile
     {
         private string _ticket;
@@ -39,86 +40,86 @@ namespace Intuit.QuickBase.Core
 
         public string Ticket
         {
-            get { return _ticket; }
+            get { return this._ticket; }
             set
             {
                 if (value == null) throw new ArgumentNullException("ticket");
                 if (value.Trim() == String.Empty) throw new ArgumentException("ticket");
-                _ticket = value;
+                this._ticket = value;
             }
         }
 
         public string AccountDomain
         {
-            get { return _accountDomain; }
+            get { return this._accountDomain; }
             set
             {
                 if (value == null) throw new ArgumentNullException("accountDomain");
                 if (value.Trim() == String.Empty) throw new ArgumentException("accountDomain");
-                _accountDomain = value;
+                this._accountDomain = value;
             }
         }
 
         public string Path
         {
-            get { return _path; }
+            get { return this._path; }
             set
             {
                 if (value == null) throw new ArgumentNullException("path");
                 if (value.Trim() == String.Empty) throw new ArgumentException("path");
-                _path = value;
+                this._path = value;
             }
         }
 
         public string File
         {
-            get { return _file; }
+            get { return this._file; }
             set
             {
                 if (value == null) throw new ArgumentNullException("file");
                 if (value.Trim() == String.Empty) throw new ArgumentException("file");
-                _file = value;
+                this._file = value;
             }
         }
 
         private string TableId
         {
-            get { return _tableId; }
+            get { return this._tableId; }
             set
             {
                 if (value == null) throw new ArgumentNullException("tableId");
                 if (value.Trim() == String.Empty) throw new ArgumentException("tableId");
-                _tableId = value;
+                this._tableId = value;
             }
         }
 
         private int RecordId
         {
-            get { return _recordId; }
+            get { return this._recordId; }
             set
             {
                 if (value < 1) throw new ArgumentException("recordId");
-                _recordId = value;
+                this._recordId = value;
             }
         }
 
         private int FieldId
         {
-            get { return _fieldId; }
+            get { return this._fieldId; }
             set
             {
                 if (value < 1) throw new ArgumentException("fieldId");
-                _fieldId = value;
+                this._fieldId = value;
             }
         }
 
         private int VersionId
         {
-            get { return _versionId; }
+            get { return this._versionId; }
             set
             {
                 if (value < 0) throw new ArgumentException("versionId");
-                _versionId = value;
+                this._versionId = value;
             }
         }
 

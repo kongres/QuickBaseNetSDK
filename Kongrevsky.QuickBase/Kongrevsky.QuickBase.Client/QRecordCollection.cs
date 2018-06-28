@@ -6,17 +6,18 @@
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
 
-using Intuit.QuickBase.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using Kongrevsky.QuickBase.Core;
+
     // TODO: May want to compose List<IQRecord> to hide the complexity of the List type.
     public sealed class QRecordCollection : List<IQRecord>
     {
-        private readonly List<dynamic> _recordsToRemove = new List<dynamic>();
+        private readonly List<int> _recordsToRemove = new List<int>();
 
         public QRecordCollection(IQApplication application, IQTable table)
         {
@@ -32,40 +33,113 @@ namespace Intuit.QuickBase.Client
         {
             if (record.IsOnServer)
             {
-                if (Table.KeyFID == -1) _recordsToRemove.Add(record.RecordId);
-                else _recordsToRemove.Add(record[Table.KeyFID]);
+                this._recordsToRemove.Add(record.RecordId);
             }
             return base.Remove(record);
         }
 
+        public new void RemoveAt(int index)
+        {
+            IQRecord record = this[index];
+            if (record.IsOnServer)
+            {
+                this._recordsToRemove.Add(record.RecordId);
+            }
+            base.RemoveAt(index);
+        }
+
+        public new void RemoveAll(Predicate<IQRecord> predicate)
+        {
+            int idx = 0;
+            int startIdx = 0;
+            while ((idx = this.FindIndex(startIdx, predicate)) >= 0)
+            {
+                IQRecord record = this[idx];
+                if (record.IsOnServer)
+                {
+                    this._recordsToRemove.Add(record.RecordId);
+                }
+                startIdx = idx + 1;
+            }
+            base.RemoveAll(predicate);
+        }
+
         internal void RemoveRecords()
         {
-            if (_recordsToRemove.Count > 0)
+            if (this._recordsToRemove.Count > 0)
             {
-                int keyfield = Table.KeyFID;
-                if (keyfield == -1) keyfield = Table.Columns.Single(c => c.ColumnName == "Record ID#").ColumnId;
-                List<string> lstQry =
-                    _recordsToRemove.Select(recordId => String.Format("{{'{0}'.EQ.'{1}'}}", keyfield, (object)recordId))
-                        .ToList();
-                //TODO: further optimization possible: sort and search through lstQry combining conjoining spans
-                int cnt = lstQry.Count;
-                for (int i = 0; i < cnt; i += 100)
+                int keyfield = Table.Columns.Single(c => c.ColumnType == FieldType.recordid).ColumnId;
+                List<string> lstQry = new List<string>();
+                this._recordsToRemove.Sort();
+                int lastVal = this._recordsToRemove[0];
+                int rangeStart = -1, rangeEnd = -1;
+                for (int i = 1; i < this._recordsToRemove.Count; i++)
                 {
-                    int k = Math.Min(100, cnt - i);
-                    string qry = String.Join(" OR ", lstQry.Skip(i).Take(k));
-                    var prBuild = new PurgeRecords.Builder(Application.Client.Ticket, Application.Token,
-                        Application.Client.AccountDomain, Table.TableId);
-                    prBuild.SetQuery(qry);
-                    var xml = prBuild.Build().Post().CreateNavigator();
-                    int result = int.Parse(xml.SelectSingleNode("/qdbapi/errcode").Value);
-                    if (result != 0)
+                    int val = this._recordsToRemove[i];
+                    if (val == lastVal + 1)
                     {
-                        string errmsg = xml.SelectSingleNode("/qdbapi/errtxt").Value;
-                        throw new ApplicationException("Error in purgeRecords: '" + errmsg + "'");
+                        if (rangeStart == -1) rangeStart = lastVal;
+                        rangeEnd = val;
+                    }
+                    else
+                    {
+                        if (rangeStart != -1)
+                        {
+                            lstQry.Add(string.Format("{{'{0}'.GTE.'{1}'}} AND {{'{0}'.LTE.'{2}'}}", keyfield, rangeStart, rangeEnd));
+                            rangeStart = -1;
+                            rangeEnd = -1;
+                        }
+                        else
+                        {
+                            lstQry.Add(string.Format("{{'{0}'.EQ.'{1}'}}", keyfield, lastVal));   
+                        }
+                    }
+                    lastVal = val;
+                }
+                if (rangeStart != -1)
+                {
+                    lstQry.Add(string.Format("{{'{0}'.GTE.'{1}'}} AND {{'{0}'.LTE.'{2}'}}", keyfield, rangeStart, rangeEnd));
+                }
+                else
+                {
+                    lstQry.Add(string.Format("{{'{0}'.EQ.'{1}'}}", keyfield, lastVal));
+                }
+                StringBuilder qry = null;
+                int cnt = 0;
+                foreach (string addStr in lstQry)
+                {
+                    if (addStr.Contains("AND")) cnt += 2;
+                    else cnt += 1;
+                    if (qry == null)
+                        qry = new StringBuilder(addStr);
+                    else
+                    {
+                        qry.Append(" OR " + addStr);
+                    }
+                    if (cnt >= 98)
+                    {
+                        SendDelete(qry.ToString());
+                        cnt = 0;
+                        qry = null;
                     }
                 }
+                if (qry != null) SendDelete(qry.ToString());
             }
-            _recordsToRemove.Clear();
+            this._recordsToRemove.Clear();
+        }
+
+        private void SendDelete(string qry)
+        {
+            var prBuild = new PurgeRecords.Builder(Application.Client.Ticket, Application.Token,
+                Application.Client.AccountDomain, Table.TableId);
+            prBuild.SetQuery(qry.ToString());
+            var xml = prBuild.Build().Post().CreateNavigator();
+            int result = int.Parse(xml.SelectSingleNode("/qdbapi/errcode").Value);
+            if (result != 0)
+            {
+                string errmsg = xml.SelectSingleNode("/qdbapi/errtxt").Value;
+                throw new ApplicationException("Error in RemoveRecords: '" + errmsg + "'");
+            }
         }
     }
 }

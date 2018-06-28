@@ -5,11 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class DoQueryPayload : Payload
     {
         private readonly string _query;
@@ -17,7 +18,7 @@ namespace Intuit.QuickBase.Core.Payload
         private readonly string _qName;
         private readonly string _cList;
         private readonly string _sList;
-        private readonly string _options;
+        private string _options;
         private readonly bool _fmt;
 
         internal class Builder
@@ -79,25 +80,31 @@ namespace Intuit.QuickBase.Core.Payload
 
         private DoQueryPayload(Builder builder)
         {
-            _query = builder.Query;
-            _qid = builder.Qid;
-            _qName = builder.QName;
-            _cList = builder.CList;
-            _sList = builder.SList;
-            _options = builder.Options;
-            _fmt = builder.Fmt;
+            this._query = builder.Query;
+            this._qid = builder.Qid;
+            this._qName = builder.QName;
+            this._cList = builder.CList;
+            this._sList = builder.SList;
+            this._options = builder.Options;
+            this._fmt = builder.Fmt;
+        }
+
+        public string Options
+        {
+            get { return this._options; }
+            set { this._options = value; }
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(!String.IsNullOrEmpty(_query) ? String.Format("<query>{0}</query>", _query) : String.Empty);
-            sb.Append(_qid > 0 ? String.Format("<qid>{0}</qid>", _qid) : String.Empty);
-            sb.Append(!String.IsNullOrEmpty(_qName) ? String.Format("<qname>{0}</qname>", _qName) : String.Empty);
-            sb.Append(!String.IsNullOrEmpty(_cList) ? String.Format("<clist>{0}</clist>", _cList) : String.Empty);
-            sb.Append(!String.IsNullOrEmpty(_sList) ? String.Format("<slist>{0}</slist>", _sList) : String.Empty);
-            sb.Append(!String.IsNullOrEmpty(_options) ? String.Format("<options>{0}</options>", _options) : String.Empty);
-            sb.Append(_fmt ? "<fmt>structured</fmt>" : String.Empty);
+            if (!string.IsNullOrEmpty(this._query)) sb.Append(new XElement("query", this._query));
+            if (this._qid > 0) sb.Append(new XElement("qid", this._qid));
+            if (!string.IsNullOrEmpty(this._qName)) sb.Append(new XElement("qname", this._qName));
+            if (!string.IsNullOrEmpty(this._cList)) sb.Append(new XElement("clist", this._cList));
+            if (!string.IsNullOrEmpty(this._sList)) sb.Append(new XElement("slist", this._sList));
+            if (!string.IsNullOrEmpty(this._options)) sb.Append(new XElement("options", this._options));
+            sb.Append(new XElement("fmt", "structured"));
             return sb.ToString();
         }
     }

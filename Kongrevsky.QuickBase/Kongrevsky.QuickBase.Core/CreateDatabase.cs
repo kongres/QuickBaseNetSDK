@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// This call creates a new QuickBase application with the main application table 
     /// populated only with the built in fields and optionally generates and returns 
@@ -48,17 +49,17 @@ namespace Intuit.QuickBase.Core
         /// <param name="createAppToken">Supply "true" to create a new token, "false" otherwise.</param>
         public CreateDatabase(string ticket, string accountDomain, string dbName, string dbDesc, bool createAppToken)
         {
-            _createDatabasePayload = new CreateDatabasePayload(dbName, dbDesc, createAppToken);
-            _createDatabasePayload = new ApplicationTicket(_createDatabasePayload, ticket);
-            _createDatabasePayload = new WrapPayload(_createDatabasePayload);
-            _uri = new QUriMain(accountDomain);
+            this._createDatabasePayload = new CreateDatabasePayload(dbName, dbDesc, createAppToken);
+            this._createDatabasePayload = new ApplicationTicket(this._createDatabasePayload, ticket);
+            this._createDatabasePayload = new WrapPayload(this._createDatabasePayload);
+            this._uri = new QUriMain(accountDomain);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _createDatabasePayload.GetXmlPayload();
+                return this._createDatabasePayload.GetXmlPayload();
             }
         }
 
@@ -66,7 +67,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System.Xml.XPath;
+
     internal abstract class QRecordFactoryBase
     {
         internal abstract IQRecord CreateInstance(IQApplication application, IQTable table, QColumnCollection columns);

@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Collections.Generic;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System.Collections.Generic;
+
     public class UserRoleInfo
     {
         private readonly List<RoleInfo> _roleInfos;
@@ -17,7 +18,7 @@ namespace Intuit.QuickBase.Client
         {
             UserId = userId;
             Name = name;
-            _roleInfos = new List<RoleInfo>();
+            this._roleInfos = new List<RoleInfo>();
         }
 
         public string UserId { get; private set; }
@@ -25,14 +26,14 @@ namespace Intuit.QuickBase.Client
 
         public void AddRole(int roleId, string name, int accessId, string access)
         {
-            _roleInfos.Add(new RoleInfo(roleId, name, accessId, access));
+            this._roleInfos.Add(new RoleInfo(roleId, name, accessId, access));
         }
 
         public List<RoleInfo> Roles
         {
             get
             {
-                return _roleInfos;
+                return this._roleInfos;
             }
         }
     }

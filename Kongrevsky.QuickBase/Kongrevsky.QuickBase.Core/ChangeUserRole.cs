@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class ChangeUserRole : IQObject
     {
         private const string QUICKBASE_ACTION = "API_ChangeUserRole";
@@ -30,17 +31,17 @@ namespace Intuit.QuickBase.Core
 
         private void CommonConstruction(string ticket, string appToken, string accountDomain, string dbid, Payload.Payload payload)
         {
-            _changeUserRolePayload = new ApplicationTicket(payload, ticket);
-            _changeUserRolePayload = new ApplicationToken(_changeUserRolePayload, appToken);
-            _changeUserRolePayload = new WrapPayload(_changeUserRolePayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._changeUserRolePayload = new ApplicationTicket(payload, ticket);
+            this._changeUserRolePayload = new ApplicationToken(this._changeUserRolePayload, appToken);
+            this._changeUserRolePayload = new WrapPayload(this._changeUserRolePayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _changeUserRolePayload.GetXmlPayload();
+                return this._changeUserRolePayload.GetXmlPayload();
             }
         }
 
@@ -48,7 +49,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

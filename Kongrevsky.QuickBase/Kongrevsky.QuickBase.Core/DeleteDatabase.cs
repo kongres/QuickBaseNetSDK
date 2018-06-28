@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// If you have application administration rights, you can use this call to delete 
     /// either a child table or the entire application, depending on the dbid you supply. 
@@ -32,18 +33,18 @@ namespace Intuit.QuickBase.Core
         /// <param name="dbid">Supply application-level or table-level dbid.</param>
         public DeleteDatabase(string ticket, string appToken, string accountDomain, string dbid)
         {
-            _deleteDatabasePayload = new DeleteDatabasePayload();
-            _deleteDatabasePayload = new ApplicationTicket(_deleteDatabasePayload, ticket);
-            _deleteDatabasePayload = new ApplicationToken(_deleteDatabasePayload, appToken);
-            _deleteDatabasePayload = new WrapPayload(_deleteDatabasePayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._deleteDatabasePayload = new DeleteDatabasePayload();
+            this._deleteDatabasePayload = new ApplicationTicket(this._deleteDatabasePayload, ticket);
+            this._deleteDatabasePayload = new ApplicationToken(this._deleteDatabasePayload, appToken);
+            this._deleteDatabasePayload = new WrapPayload(this._deleteDatabasePayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _deleteDatabasePayload.GetXmlPayload();
+                return this._deleteDatabasePayload.GetXmlPayload();
             }
         }
 
@@ -51,7 +52,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

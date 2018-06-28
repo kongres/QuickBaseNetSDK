@@ -5,11 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class SendInvitationPayload : Payload
     {
         private string _userId;
@@ -28,33 +30,31 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string UserId
         {
-            get { return _userId; }
+            get { return this._userId; }
             set
             {
                 if (value == null) throw new ArgumentNullException("userId");
                 if (value.Trim() == String.Empty) throw new ArgumentException("userId");
-                _userId = value;
+                this._userId = value;
             }
         }
 
         private string UserText
         {
-            get { return _userText; }
+            get { return this._userText; }
             set
             {
                 if (value == null) throw new ArgumentNullException("userText");
                 if (value.Trim() == String.Empty) throw new ArgumentException("userText");
-                _userText = value;
+                this._userText = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(String.Format("<userid>{0}</userid>", UserId));
-            sb.Append(!String.IsNullOrEmpty(UserText)
-                          ? String.Format("<usertext>{0}</usertext>", UserText)
-                          : String.Empty);
+            sb.Append(new XElement("userid", UserId));
+            if (!string.IsNullOrEmpty(UserText))  sb.Append(new XElement("usertext", UserText));
             return sb.ToString();
         }
     }

@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
     public interface IQRecord
     {
         int RecordId { get; }
         RecordState RecordState { get; }
+        bool UncleanState { get; }
         bool IsOnServer { get; }
         object this[int index] { get; set; }
         object this[string columnName] { get; set; }
@@ -19,7 +20,6 @@ namespace Intuit.QuickBase.Client
         void DownloadFile(string columnName, string path, int versionId);
         void ChangeOwnerTo(string newOwner);
         string GetAsCSV(string clist);
-        string GetAsCSV();
         bool Equals(IQRecord record);
         bool Equals(object obj);
         int GetHashCode();
@@ -28,7 +28,7 @@ namespace Intuit.QuickBase.Client
 
     internal interface IQRecord_int
     {
-        void ForceUpdateState(int RecordId);
+        void ForceUpdateState(int recId);
         void ForceUpdateState();
         int GetColumnIndex(string colName);
     }

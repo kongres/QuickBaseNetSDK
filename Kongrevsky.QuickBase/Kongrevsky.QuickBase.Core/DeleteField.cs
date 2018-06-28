@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// If you have application administration rights, you can use this call to delete a 
     /// table field by specifying the field id (fid) in the &lt;fid&gt; param. You have to 
@@ -35,18 +36,18 @@ namespace Intuit.QuickBase.Core
         /// <param name="fid">Supply a column object.</param>
         public DeleteField(string ticket, string appToken, string accountDomain, string dbid, int fid)
         {
-            _deleteFieldPayload = new DeleteFieldPayload(fid);
-            _deleteFieldPayload = new ApplicationTicket(_deleteFieldPayload, ticket);
-            _deleteFieldPayload = new ApplicationToken(_deleteFieldPayload, appToken);
-            _deleteFieldPayload = new WrapPayload(_deleteFieldPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._deleteFieldPayload = new DeleteFieldPayload(fid);
+            this._deleteFieldPayload = new ApplicationTicket(this._deleteFieldPayload, ticket);
+            this._deleteFieldPayload = new ApplicationToken(this._deleteFieldPayload, appToken);
+            this._deleteFieldPayload = new WrapPayload(this._deleteFieldPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _deleteFieldPayload.GetXmlPayload();
+                return this._deleteFieldPayload.GetXmlPayload();
             }
         }
 
@@ -54,7 +55,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

@@ -5,14 +5,15 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Collections.Generic;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// You invoke this call on a table-level dbid to add a record to that table by specifying 
     /// fields and their values. You don’t have to set all field values but you must set 
@@ -38,12 +39,12 @@ namespace Intuit.QuickBase.Core
             {
                 get
                 {
-                    return _fields;
+                    return this._fields;
                 }
                 set
                 {
                     if (value == null) throw new ArgumentNullException("fields");
-                    _fields = value;
+                    this._fields = value;
                 }
             }
 
@@ -64,6 +65,14 @@ namespace Intuit.QuickBase.Core
                 return this;
             }
 
+            internal bool TimeInUtc { get; private set; }
+
+            public Builder SetTimeInUtc(bool val)
+            {
+                TimeInUtc = val;
+                return this;
+            }
+
             internal bool Fform { get; private set; }
 
             public Builder SetFform(bool val)
@@ -80,21 +89,22 @@ namespace Intuit.QuickBase.Core
 
         private AddRecord(Builder builder)
         {
-            _addRecordPayload = new AddRecordPayload.Builder(builder.Fields)
+            this._addRecordPayload = new AddRecordPayload.Builder(builder.Fields)
                 .SetDisprec(builder.Disprec)
+                .SetTimeInUtc(builder.TimeInUtc)
                 .SetFform(builder.Fform)
                 .Build();
-            _addRecordPayload = new ApplicationTicket(_addRecordPayload, builder.Ticket);
-            _addRecordPayload = new ApplicationToken(_addRecordPayload, builder.AppToken);
-            _addRecordPayload = new WrapPayload(_addRecordPayload);
-            _uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+            this._addRecordPayload = new ApplicationTicket(this._addRecordPayload, builder.Ticket);
+            this._addRecordPayload = new ApplicationToken(this._addRecordPayload, builder.AppToken);
+            this._addRecordPayload = new WrapPayload(this._addRecordPayload);
+            this._uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _addRecordPayload.GetXmlPayload();
+                return this._addRecordPayload.GetXmlPayload();
             }
         }
 
@@ -102,7 +112,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

@@ -5,14 +5,15 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Collections.Generic;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core;
-using Intuit.QuickBase.Core.Exceptions;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core;
+    using Kongrevsky.QuickBase.Core.Exceptions;
+
     public enum CloneData
     {
         No = 0,
@@ -118,7 +119,7 @@ namespace Intuit.QuickBase.Client
             Token = null;
             ApplicationId = null;
             ApplicationName = null;
-            _qbDataTables.Clear();
+            this._qbDataTables.Clear();
         }
 
         public UserInfo GetUserInfo(string email)
@@ -191,31 +192,31 @@ namespace Intuit.QuickBase.Client
         public IQTable NewTable(string tableName, string pNoun)
         {
             var table = TableFactory.CreateInstance(this, tableName, pNoun);
-            _qbDataTables.Add(table.TableId, table);
+            this._qbDataTables.Add(table.TableId, table);
             return table;
         }
 
         public void DeleteTable(IQTable table)
         {
             var tableId = table.TableId;
-            if (!_qbDataTables.ContainsKey(tableId))
+            if (!this._qbDataTables.ContainsKey(tableId))
             {
                 throw new TableDoesNotExistInQuickBase("Table does not exist in this instance of QApplication.");
             }
             var deleteTbl = new DeleteDatabase(Client.Ticket, Token, Client.AccountDomain, tableId);
             deleteTbl.Post();
 
-            _qbDataTables.Remove(tableId);
+            this._qbDataTables.Remove(tableId);
         }
 
         public IQTable GetTable(string dbid)
         {
-            return _qbDataTables.ContainsKey(dbid) ? _qbDataTables[dbid] : null;
+            return this._qbDataTables.ContainsKey(dbid) ? this._qbDataTables[dbid] : null;
         }
 
         public Dictionary<string, IQTable> GetTables()
         {
-            return _qbDataTables;
+            return this._qbDataTables;
         }
 
         public AppDtm GetApplicationDataTimeInfo()
@@ -295,7 +296,7 @@ namespace Intuit.QuickBase.Client
                     try
                     {
                         var qDataTable = TableFactory.CreateInstance(this, dbid);
-                        _qbDataTables.Add(qDataTable.TableId, qDataTable);
+                        this._qbDataTables.Add(qDataTable.TableId, qDataTable);
                     }
                     catch (InsufficientPermissionsException) { }
                 }
@@ -309,7 +310,7 @@ namespace Intuit.QuickBase.Client
 
         public void ClearTables()
         {
-            _qbDataTables.Clear();
+            this._qbDataTables.Clear();
         }
     }
 }

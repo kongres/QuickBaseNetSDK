@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// This call is used for those implementations that make use of the TICKET cookie rather than the &lt;ticket&gt; 
     /// parameter. Invoking this call returns a null ticket cookie (with the name TICKET) that in some cases results in 
@@ -28,16 +29,16 @@ namespace Intuit.QuickBase.Core
 
         public SignOut(string accountDomain)
         {
-            _signOutPayload = new SignOutPayload();
-            _signOutPayload = new WrapPayload(_signOutPayload);
-            _uri = new QUriMain(accountDomain);
+            this._signOutPayload = new SignOutPayload();
+            this._signOutPayload = new WrapPayload(this._signOutPayload);
+            this._uri = new QUriMain(accountDomain);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _signOutPayload.GetXmlPayload();
+                return this._signOutPayload.GetXmlPayload();
             }
         }
 
@@ -45,7 +46,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

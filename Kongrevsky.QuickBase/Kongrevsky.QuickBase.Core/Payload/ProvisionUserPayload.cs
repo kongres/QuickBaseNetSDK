@@ -5,11 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class ProvisionUserPayload : Payload
     {
         private string _email;
@@ -32,53 +34,54 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string Email
         {
-            get { return _email; }
+            get { return this._email; }
             set
             {
                 if (value == null) throw new ArgumentNullException("email");
                 if (value.Trim() == String.Empty) throw new ArgumentException("email");
-                _email = value;
+                this._email = value;
             }
         }
 
         private int RoleId
         {
-            get { return _roleId; }
+            get { return this._roleId; }
             set
             {
                 if (value < 1) throw new ArgumentException("roleId");
-                _roleId = value;
+                this._roleId = value;
             }
         }
 
         private string FirstName
         {
-            get { return _firstName; }
+            get { return this._firstName; }
             set
             {
                 if (value == null) throw new ArgumentNullException("firstName");
                 if (value.Trim() == String.Empty) throw new ArgumentException("firstName");
-                _firstName = value;
+                this._firstName = value;
             }
         }
 
         private string LastName
         {
-            get { return _lastName; }
+            get { return this._lastName; }
             set
             {
                 if (value == null) throw new ArgumentNullException("lastName");
                 if (value.Trim() == String.Empty) throw new ArgumentException("lastName");
-                _lastName = value;
+                this._lastName = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(String.Format("<email>{0}</email><fname>{1}</fname><lname>{2}</lname>",
-                Email, FirstName, LastName));
-            sb.Append(RoleId > 0 ? String.Format("<roleid>{0}</roleid>", RoleId) : String.Empty);
+            sb.Append(new XElement("email", Email));
+            sb.Append(new XElement("fname", FirstName));
+            sb.Append(new XElement("lname", LastName));
+            if (RoleId > 0) sb.Append(new XElement("roleid", RoleId));
             return sb.ToString();
         }
     }

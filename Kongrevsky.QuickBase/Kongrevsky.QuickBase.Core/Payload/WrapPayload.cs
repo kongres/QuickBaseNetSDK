@@ -5,18 +5,19 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-namespace Intuit.QuickBase.Core.Payload
+
+namespace Kongrevsky.QuickBase.Core.Payload
 {
     internal class WrapPayload : PayloadDecorator
     {
-        internal WrapPayload(Payload paylaod)
+        internal WrapPayload(Payload payload)
         {
-            Payload = paylaod;
+            Payload = payload;
         }
 
         internal override string GetXmlPayload()
         {
-            return string.Format("<qdbapi>{0}</qdbapi>", Payload.GetXmlPayload());
+            return "<qdbapi>" + Payload.GetXmlPayload() + "</qdbapi>";
         }
     }
 }

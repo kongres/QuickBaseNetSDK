@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// If you have application administration rights, you can use this call to create 
     /// a child table for that application. The dbid you supply must be an application-level 
@@ -70,21 +71,21 @@ namespace Intuit.QuickBase.Core
 
         private CreateTable(Builder builder)
         {
-            _createTablePayload = new CreateTablePayload.Builder()
+            this._createTablePayload = new CreateTablePayload.Builder()
                 .SetTName(builder.TName)
                 .SetPNoun(builder.PNoun)
                 .Build();
-            _createTablePayload = new ApplicationTicket(_createTablePayload, builder.Ticket);
-            _createTablePayload = new ApplicationToken(_createTablePayload, builder.AppToken);
-            _createTablePayload = new WrapPayload(_createTablePayload);
-            _uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+            this._createTablePayload = new ApplicationTicket(this._createTablePayload, builder.Ticket);
+            this._createTablePayload = new ApplicationToken(this._createTablePayload, builder.AppToken);
+            this._createTablePayload = new WrapPayload(this._createTablePayload);
+            this._uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _createTablePayload.GetXmlPayload();
+                return this._createTablePayload.GetXmlPayload();
             }
         }
 
@@ -92,7 +93,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

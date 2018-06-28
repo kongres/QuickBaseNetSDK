@@ -5,11 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class ChangeUserRolePayload : Payload
     {
         private string _userId;
@@ -30,41 +32,45 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string UserId
         {
-            get { return _userId; }
+            get { return this._userId; }
             set
             {
                 if (value == null) throw new ArgumentNullException("userId");
                 if (value.Trim() == String.Empty) throw new ArgumentException("userId");
-                _userId = value;
+                this._userId = value;
             }
         }
 
         private int RoleId
         {
-            get { return _roleId; }
+            get { return this._roleId; }
             set
             {
                 // value of 0 okay
                 if (value < 0) throw new ArgumentException("roleId");
-                _roleId = value;
+                this._roleId = value;
             }
         }
         
         private int NewRoleId
         {
-            get { return _newRoleId; }
+            get { return this._newRoleId; }
             set
             {
                 if (value < 1) throw new ArgumentException("newRoleId");
-                _newRoleId = value;
+                this._newRoleId = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(String.Format("<userid>{0}</userid><roleid>{1}</roleid>", UserId, RoleId));
-            sb.Append(NewRoleId > 0 ? String.Format("<newRoleid>{0}</newRoleid>", NewRoleId) : "<newRoleid/>");
+            sb.Append(new XElement("userid", UserId));
+            sb.Append(new XElement("roleid", RoleId));
+            if (NewRoleId > 0)
+                sb.Append(new XElement("newRoleid", NewRoleId));
+            else
+                sb.Append(new XElement("newRoleid"));
             return sb.ToString();
         }
     }

@@ -5,11 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Collections.Generic;
-using Intuit.QuickBase.Core;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System.Collections.Generic;
+    using Kongrevsky.QuickBase.Core;
+
     // TODO: May want to compose List<IQColumn> to hide the complexity of the List type.
     public sealed class QColumnCollection : List<IQColumn>
     {

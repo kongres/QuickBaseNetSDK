@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// You use this call to get the application-level dbid of an application whose name you know. Only those applications 
     /// that granted you access rights will be searched. Because you can have multiple applications with the same name, 
@@ -30,17 +31,17 @@ namespace Intuit.QuickBase.Core
         /// <param name="dbName">Supply application name to search for.</param>
         public FindDbByName(string ticket, string accountDomain, string dbName)
         {
-            _findDbByNamePayload = new FindDbByNamePayload(dbName);
-            _findDbByNamePayload = new ApplicationTicket(_findDbByNamePayload, ticket);
-            _findDbByNamePayload = new WrapPayload(_findDbByNamePayload);
-            _uri = new QUriMain(accountDomain);
+            this._findDbByNamePayload = new FindDbByNamePayload(dbName);
+            this._findDbByNamePayload = new ApplicationTicket(this._findDbByNamePayload, ticket);
+            this._findDbByNamePayload = new WrapPayload(this._findDbByNamePayload);
+            this._uri = new QUriMain(accountDomain);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _findDbByNamePayload.GetXmlPayload();
+                return this._findDbByNamePayload.GetXmlPayload();
             }
         }
 
@@ -48,7 +49,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class RunImport : IQObject
     {
         private const string QUICKBASE_ACTION = "API_runimport";
@@ -19,18 +20,18 @@ namespace Intuit.QuickBase.Core
 
         public RunImport(string ticket, string appToken, string accountDomain, string dbid, int id)
         {
-            _runImportPayload = new RunImportPayload(id);
-            _runImportPayload = new ApplicationTicket(_runImportPayload, ticket);
-            _runImportPayload = new ApplicationToken(_runImportPayload, appToken);
-            _runImportPayload = new WrapPayload(_runImportPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._runImportPayload = new RunImportPayload(id);
+            this._runImportPayload = new ApplicationTicket(this._runImportPayload, ticket);
+            this._runImportPayload = new ApplicationToken(this._runImportPayload, appToken);
+            this._runImportPayload = new WrapPayload(this._runImportPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _runImportPayload.GetXmlPayload();
+                return this._runImportPayload.GetXmlPayload();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

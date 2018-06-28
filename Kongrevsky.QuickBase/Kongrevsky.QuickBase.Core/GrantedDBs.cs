@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class GrantedDBs : IQObject
     {
         private const string QUICKBASE_ACTION = "API_GrantedDBs";
@@ -62,22 +63,22 @@ namespace Intuit.QuickBase.Core
 
         private GrantedDBs(Builder builder)
         {
-            _grantDBsPayload = new GrantDBsPayload.Builder()
+            this._grantDBsPayload = new GrantDBsPayload.Builder()
                 .SetExcludedParents(builder.ExcludedParents)
                 .SetWithEmbeddedTables(builder.WithEmbeddedTables)
                 .SetAdminOnly(builder.AdminOnly)
                 .Build();
-            _grantDBsPayload = new ApplicationTicket(_grantDBsPayload, builder.Ticket);
-            _grantDBsPayload = new ApplicationToken(_grantDBsPayload, builder.AppToken);
-            _grantDBsPayload = new WrapPayload(_grantDBsPayload);
-            _uri = new QUriMain(builder.AccountDomain);
+            this._grantDBsPayload = new ApplicationTicket(this._grantDBsPayload, builder.Ticket);
+            this._grantDBsPayload = new ApplicationToken(this._grantDBsPayload, builder.AppToken);
+            this._grantDBsPayload = new WrapPayload(this._grantDBsPayload);
+            this._uri = new QUriMain(builder.AccountDomain);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _grantDBsPayload.GetXmlPayload();
+                return this._grantDBsPayload.GetXmlPayload();
             }
         }
 
@@ -85,7 +86,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

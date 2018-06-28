@@ -5,10 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Xml.Linq;
+
     internal class GetUserInfoPayload : Payload
     {
         private string _email;
@@ -22,18 +24,18 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string Email
         {
-            get { return _email; }
+            get { return this._email; }
             set
             {
                 if (value == null) throw new ArgumentNullException("email");
                 if (value.Trim() == String.Empty) throw new ArgumentException("email");
-                _email = value;
+                this._email = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
-            return !String.IsNullOrEmpty(Email) ? String.Format("<email>{0}</email>", Email) : String.Empty;
+            return !String.IsNullOrEmpty(Email) ? new XElement("email", Email).ToString() : string.Empty;
         }
     }
 }

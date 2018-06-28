@@ -5,11 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class GrantDBsPayload : Payload
     {
         private readonly bool _excludeParents;
@@ -47,17 +48,17 @@ namespace Intuit.QuickBase.Core.Payload
 
         private GrantDBsPayload(Builder builder)
         {
-            _excludeParents = builder.ExcludedParents;
-            _withEmbeddedTables = builder.WithEmbeddedTables;
-            _adminOnly = builder.AdminOnly;
+            this._excludeParents = builder.ExcludedParents;
+            this._withEmbeddedTables = builder.WithEmbeddedTables;
+            this._adminOnly = builder.AdminOnly;
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(_excludeParents ? "<Excludeparents>1</Excludeparents>" : "<Excludeparents>0</Excludeparents>");
-            sb.Append(_withEmbeddedTables ? "<withembeddedtables>1</withembeddedtables>" : "<withembeddedtables>0</withembeddedtables>");
-            sb.Append(_adminOnly ? "<adminOnly/>" : String.Empty);
+            sb.Append(new XElement("Excludeparents", this._excludeParents ? 1 : 0));
+            sb.Append(new XElement("withembeddedtables", this._withEmbeddedTables ? 1 : 0));
+            if (this._adminOnly) sb.Append(new XElement("adminOnly"));
             return sb.ToString();
         }
     }

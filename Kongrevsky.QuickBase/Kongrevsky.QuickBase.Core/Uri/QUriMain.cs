@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Uri
+namespace Kongrevsky.QuickBase.Core.Uri
 {
+    using System;
+
     internal class QUriMain : QUri
     {
         private const string RESOURCE = "main";
@@ -21,12 +22,12 @@ namespace Intuit.QuickBase.Core.Uri
 
         private string AccountDomain
         {
-            get { return _accountDomain; }
+            get { return this._accountDomain; }
             set
             {
                 if (value == null) throw new ArgumentNullException("accountDomain");
                 if (value.Trim() == String.Empty) throw new ArgumentException("accountDomain");
-                _accountDomain = value;
+                this._accountDomain = value;
             }
         }
 

@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class AddReplaceDBPage : IQObject
     {
         private const string QUICKBASE_ACTION = "API_AddReplaceDBPage";
@@ -29,17 +30,17 @@ namespace Intuit.QuickBase.Core
 
         private void CommonConstruction(string ticket, string appToken, string accountDomain, string dbid, Payload.Payload payload)
         {
-            _addReplaceDBPagePayload = new ApplicationTicket(payload, ticket);
-            _addReplaceDBPagePayload = new ApplicationToken(_addReplaceDBPagePayload, appToken);
-            _addReplaceDBPagePayload = new WrapPayload(_addReplaceDBPagePayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._addReplaceDBPagePayload = new ApplicationTicket(payload, ticket);
+            this._addReplaceDBPagePayload = new ApplicationToken(this._addReplaceDBPagePayload, appToken);
+            this._addReplaceDBPagePayload = new WrapPayload(this._addReplaceDBPagePayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _addReplaceDBPagePayload.GetXmlPayload();
+                return this._addReplaceDBPagePayload.GetXmlPayload();
             }
         }
 
@@ -47,7 +48,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

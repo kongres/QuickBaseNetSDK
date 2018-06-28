@@ -5,14 +5,15 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Xml.XPath;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.IO;
+    using System.Net;
+    using System.Text;
+    using System.Xml.XPath;
+
     internal class HttpPostString : HttpPost
     {
         private const string CONTENT_TYPE = "application/xml";

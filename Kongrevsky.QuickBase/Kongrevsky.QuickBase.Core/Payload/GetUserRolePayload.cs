@@ -5,10 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Xml.Linq;
+
     internal class GetUserRolePayload : Payload
     {
         private string _userId;
@@ -20,18 +22,18 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string UserId
         {
-            get { return _userId; }
+            get { return this._userId; }
             set
             {
                 if (value == null) throw new ArgumentNullException("userId");
                 if (value.Trim() == String.Empty) throw new ArgumentException("userId");
-                _userId = value;
+                this._userId = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
-            return String.Format("<userid>{0}</userid>", UserId);
+            return new XElement("userid", UserId).ToString();
         }
     }
 }

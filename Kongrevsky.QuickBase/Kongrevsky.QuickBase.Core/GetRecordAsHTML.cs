@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class GetRecordAsHtml : IQObject
     {
         private const string QUICKBASE_ACTION = "API_GetRecordAsHTML";
@@ -29,17 +30,17 @@ namespace Intuit.QuickBase.Core
 
         private void CommonConstruction(string ticket, string appToken, string accountDomain, string dbid, Payload.Payload payload)
         {
-            _getRecordAsHtmlPayload = new ApplicationTicket(payload, ticket);
-            _getRecordAsHtmlPayload = new ApplicationToken(_getRecordAsHtmlPayload, appToken);
-            _getRecordAsHtmlPayload = new WrapPayload(_getRecordAsHtmlPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._getRecordAsHtmlPayload = new ApplicationTicket(payload, ticket);
+            this._getRecordAsHtmlPayload = new ApplicationToken(this._getRecordAsHtmlPayload, appToken);
+            this._getRecordAsHtmlPayload = new WrapPayload(this._getRecordAsHtmlPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _getRecordAsHtmlPayload.GetXmlPayload();
+                return this._getRecordAsHtmlPayload.GetXmlPayload();
             }
         }
 
@@ -47,7 +48,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

@@ -6,11 +6,11 @@
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
 
-using System.Collections.Generic;
-using Intuit.QuickBase.Core;
-
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System.Collections.Generic;
+    using Kongrevsky.QuickBase.Core;
+
     public interface IQColumn
     {
         int ColumnId { get; set; }

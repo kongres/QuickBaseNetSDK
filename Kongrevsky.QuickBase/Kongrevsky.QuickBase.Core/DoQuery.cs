@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// You invoke this call on a table-level dbid to get records from the table. You can use this call 
     /// to get all the records and all the fields, but typically you would want to get only some 
@@ -25,6 +26,9 @@ namespace Intuit.QuickBase.Core
         private const string QUICKBASE_ACTION = "API_DoQuery";
         private readonly Payload.Payload _doQueryPayload;
         private readonly IQUri _uri;
+        private readonly string _options;
+        private readonly string _query;
+        private readonly string _collist;
 
         public class Builder
         {
@@ -116,7 +120,7 @@ namespace Intuit.QuickBase.Core
 
         private DoQuery(Builder builder)
         {
-            _doQueryPayload = new DoQueryPayload.Builder()
+            this._doQueryPayload = new DoQueryPayload.Builder()
                 .SetQuery(builder.Query)
                 .SetQid(builder.Qid)
                 .SetQName(builder.QName)
@@ -125,17 +129,35 @@ namespace Intuit.QuickBase.Core
                 .SetFmt(builder.Fmt)
                 .SetOptions(builder.Options)
                 .Build();
-            _doQueryPayload = new ApplicationTicket(_doQueryPayload, builder.Ticket);
-            _doQueryPayload = new ApplicationToken(_doQueryPayload, builder.AppToken);
-            _doQueryPayload = new WrapPayload(_doQueryPayload);
-            _uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+            this._options = builder.Options;
+            this._query = builder.Query;
+            this._collist = builder.CList;
+            this._doQueryPayload = new ApplicationTicket(this._doQueryPayload, builder.Ticket);
+            this._doQueryPayload = new ApplicationToken(this._doQueryPayload, builder.AppToken);
+            this._doQueryPayload = new WrapPayload(this._doQueryPayload);
+            this._uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+        }
+
+        public string Options
+        {
+            get { return this._options; }
+        }
+
+        public string Query
+        {
+            get { return this._query; }
+        }
+
+        public string Collist
+        {
+           get { return this._collist; }
         }
 
         public string XmlPayload
         {
             get
             {
-                return _doQueryPayload.GetXmlPayload();
+                return this._doQueryPayload.GetXmlPayload();
             }
         }
 
@@ -143,7 +165,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

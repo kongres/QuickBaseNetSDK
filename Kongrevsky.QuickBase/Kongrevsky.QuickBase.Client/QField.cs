@@ -5,14 +5,17 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Collections.Generic;
-using Intuit.QuickBase.Core;
 
-namespace Intuit.QuickBase.Client
+namespace Kongrevsky.QuickBase.Client
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+    using Kongrevsky.QuickBase.Core;
+
     internal class QField
     {
+        private static readonly Regex CSVUncleanRegEx = new Regex(@"[\r\n]");
         private static readonly DateTime qbTSOffset = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         // Instance fields
         private object _value;
@@ -41,64 +44,82 @@ namespace Intuit.QuickBase.Client
             {
                 Value = value;
             }
+            if (type == FieldType.text)
+                UncleanText = CSVUncleanRegEx.IsMatch((string)value);
+            else
+                UncleanText = false;
         }
 
         // Properties
         internal int FieldId { get; private set; }
 
+        //This gets around a bug in QB's uploadCSV api that will interpret certain characters as EndOfRecord even when surrouned by quotes
+        internal bool UncleanText { get; private set; }
+
         internal string QBValue
         {
             get
             {
-                if (_value == null) return String.Empty;
+                if (this._value == null) return String.Empty;
                 switch (Type)
                 {
                     case FieldType.address:
                         return string.Empty;
                     case FieldType.timestamp:
                     case FieldType.date:
-                        return ConvertDateTimeToQBMilliseconds((DateTime)_value);
+                        return ConvertDateTimeToQBMilliseconds((DateTime)this._value);
                     case FieldType.timeofday:
+                        return ConvertTimeSpanToQBTimeOfDay((TimeSpan)this._value);
                     case FieldType.duration:
-                        return ((TimeSpan)_value).ToString();
+                        return ConvertTimeSpanToQBDuration((TimeSpan)this._value);
                     case FieldType.checkbox:
-                        return (bool)_value == true ? "1" : "0";
+                        return (bool)this._value == true ? "1" : "0";
                     default:
-                        return _value.ToString();
+                        return this._value.ToString();
                 }
             }
             set
             {
+                UncleanText = false;
                 switch (Type)
                 {
                     case FieldType.address:
                         // do nothing: child columns will fill this out
                         break;
                     case FieldType.date:
-                        _value = String.IsNullOrEmpty(value) ? new DateTime?() : ConvertQBMillisecondsToDate(value);
+                        this._value = String.IsNullOrEmpty(value) ? new DateTime?() : ConvertQBMillisecondsToDate(value);
                         break;
                     case FieldType.timeofday:
+                        this._value = String.IsNullOrEmpty(value) ? new TimeSpan?() : ConvertQBTimeOfDayToTime(value);
+                        break;
                     case FieldType.duration:
-                        _value = String.IsNullOrEmpty(value) ? new TimeSpan?() : ConvertQBMillisecondsToTime(value);
+                        this._value = String.IsNullOrEmpty(value) ? new TimeSpan?() : ConvertQBDurationToTimeSpan(value);
                         break;
                     case FieldType.timestamp:
-                        _value = String.IsNullOrEmpty(value) ? new DateTime?() : ConvertQBMillisecondsToDateTime(value);
+                        this._value = String.IsNullOrEmpty(value) ? new DateTime?() : ConvertQBMillisecondsToDateTime(value);
                         break;
                     case FieldType.checkbox:
-                        _value = String.IsNullOrEmpty(value) ? new bool?() : (value == "1" || value == "true");
+                        this._value = String.IsNullOrEmpty(value) ? new bool?() : (value == "1" || value == "true");
                         break;
                     case FieldType.rating:
-                        _value = String.IsNullOrEmpty(value) ? new float?() : float.Parse(value);
+                        this._value = String.IsNullOrEmpty(value) ? new float?() : float.Parse(value);
                         break;
                     case FieldType.percent:
-                        _value = String.IsNullOrEmpty(value) ? new decimal?() : decimal.Parse(value) * 100; //get around roundtrip bug
+                        this._value = String.IsNullOrEmpty(value) ? new decimal?() : decimal.Parse(value) * 100; //get around roundtrip bug
                         break;
                     case FieldType.@float:
                     case FieldType.currency:
-                        _value = String.IsNullOrEmpty(value) ? new decimal?() : decimal.Parse(value);
+                        this._value = String.IsNullOrEmpty(value) ? new decimal?() : decimal.Parse(value);
+                        break;
+                    case FieldType.recordid:
+                        this._value = String.IsNullOrEmpty(value) ? new int?() : int.Parse(value);
+                        break;
+                    case FieldType.text:
+                        this._value = value;
+                        UncleanText = CSVUncleanRegEx.IsMatch((string)value);
                         break;
                     default:
-                        _value = value;
+                        this._value = value;
                         break;
                 }
             }
@@ -121,23 +142,25 @@ namespace Intuit.QuickBase.Client
                             (string)Record[colDict["country"]]
                             );
                     default:
-                        return _value;
+                        return this._value;
                 }
             }
             set
             {
                 if (value == null)
                 {
-                    if (_value != null)
+                    if (this._value != null)
                     {
-                        _value = null;
+                        UncleanText = false;
+                        this._value = null;
                         Update = true;
                     }
                 }
                 else
                 {
-                    if (_value == null || !_value.Equals(value))
+                    if (this._value == null || !this._value.Equals(value))
                     {
+                        UncleanText = false;
                         Update = true;
                         switch (Type)
                         {
@@ -156,26 +179,26 @@ namespace Intuit.QuickBase.Client
                             case FieldType.rating:
                                 if (value.GetType() != typeof(float) || (float) value < 0 || (float) value > 5)
                                     throw new ArgumentException("Invalid value for 'rating' fieldtype");
-                                _value = value;
+                                this._value = value;
                                 break;
                             case FieldType.date:
                                 if (value.GetType() != typeof(DateTime))
                                     throw new ArgumentException("Can't supply type of " + value.GetType() + " to a " +
                                                                 this.Type.ToString() + " field.");
-                                _value = ((DateTime) value).Date;
+                                this._value = ((DateTime) value).Date;
                                 break;
                             case FieldType.timestamp:
                                 if (value.GetType() != typeof(DateTime))
                                     throw new ArgumentException("Can't supply type of " + value.GetType() + " to a " +
                                                                 this.Type.ToString() + " field.");
-                                _value = value;
+                                this._value = value;
                                 break;
                             case FieldType.duration:
                             case FieldType.timeofday:
                                 if (value.GetType() != typeof(TimeSpan))
                                     throw new ArgumentException("Can't supply type of " + value.GetType() + " to a " +
                                                                 this.Type.ToString() + " field.");
-                                _value = value;
+                                this._value = value;
                                 break;
                             case FieldType.@float:
                             case FieldType.currency:
@@ -186,21 +209,29 @@ namespace Intuit.QuickBase.Client
                                     throw new ArgumentException("Can't supply type of " + value.GetType() + " to a " +
                                                                 this.Type.ToString() + " field.");
                                 if (val.HasValue)
-                                    _value = val.Value;
+                                    this._value = val.Value;
                                 else
-                                    _value = val2.Value;
+                                    this._value = val2.Value;
                                 break;
                             case FieldType.checkbox:
                                 if (value.GetType() != typeof(bool))
                                     throw new ArgumentException("Can't supply type of " + value.GetType() + " to a " +
                                                                 this.Type.ToString() + " field.");
-                                _value = value;
+                                this._value = value;
+                                break;
+                            case FieldType.recordid:
+                                if (value.GetType() != typeof(int?))
+                                   throw new ArgumentException("Can't supply type of " + value.GetType() + " to a " +
+                                                               this.Type.ToString() + " field.");
+                                this._value = value;
                                 break;
                             default:
                                 if (value.GetType() != typeof(string))
                                     throw new ArgumentException("Can't supply type of " + value.GetType() + " to a " +
                                                                 this.Type.ToString() + " field.");
-                                _value = value;
+                                if (Type == FieldType.text)
+                                    UncleanText = CSVUncleanRegEx.IsMatch((string)value);
+                                this._value = value;
                                 break;
                         }
                     }
@@ -240,25 +271,39 @@ namespace Intuit.QuickBase.Client
 
         private static DateTime ConvertQBMillisecondsToDateTime(string milliseconds)
         {
-            return qbTSOffset.AddMilliseconds(double.Parse(milliseconds)).ToLocalTime();
+            DateTime dtu = new DateTime(long.Parse(milliseconds) * TimeSpan.TicksPerMillisecond + qbTSOffset.Ticks, DateTimeKind.Utc);
+            return dtu.ToLocalTime();
         }
         private static DateTime ConvertQBMillisecondsToDate(string milliseconds)
         {
-            return qbTSOffset.AddMilliseconds(double.Parse(milliseconds)).Date;
+            DateTime dtu = new DateTime(long.Parse(milliseconds) * TimeSpan.TicksPerMillisecond + qbTSOffset.Ticks, DateTimeKind.Utc);
+            return dtu.ToLocalTime().Date;
         }
-        private static TimeSpan ConvertQBMillisecondsToTime(string milliseconds)
+        private static TimeSpan ConvertQBDurationToTimeSpan(string milliseconds)
         {
-            return qbTSOffset.AddMilliseconds(double.Parse(milliseconds)).TimeOfDay;
+            return new TimeSpan(long.Parse(milliseconds) * TimeSpan.TicksPerMillisecond);
+        }
+
+        private static TimeSpan ConvertQBTimeOfDayToTime(string milliseconds)
+        {
+            return new TimeSpan(long.Parse(milliseconds) * TimeSpan.TicksPerMillisecond);
         }
 
         private static string ConvertDateTimeToQBMilliseconds(DateTime inDT)
         {
-            return ((inDT.Ticks - qbTSOffset.Ticks) / TimeSpan.TicksPerMillisecond).ToString();
+            DateTime dte = inDT.ToUniversalTime();
+            return ((dte.Ticks - qbTSOffset.Ticks) / TimeSpan.TicksPerMillisecond).ToString();
         }
 
-        private static string ConvertTimeSpanToQBMilliseconds(TimeSpan inTime)
+        private static string ConvertTimeSpanToQBTimeOfDay(TimeSpan inTime)
         {
-            return (inTime.Ticks / TimeSpan.TicksPerMillisecond).ToString();
+            DateTime dt = new DateTime() + inTime;
+            return dt.ToString("h:mm tt");
+        }
+
+        private static string ConvertTimeSpanToQBDuration(TimeSpan inTime)
+        {
+            return (inTime.TotalSeconds).ToString();
         }
     }
 }

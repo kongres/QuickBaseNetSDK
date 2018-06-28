@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class ChangeRecordOwner : IQObject
     {
         private const string QUICKBASE_ACTION = "API_ChangeRecordOwner";
@@ -19,18 +20,18 @@ namespace Intuit.QuickBase.Core
 
         public ChangeRecordOwner(string ticket, string appToken, string accountDomain, string dbid, int rid, string newOwner)
         {
-            _changeRecordOwnerPayload = new ChangeRecordOwnerPayload(rid, newOwner);
-            _changeRecordOwnerPayload = new ApplicationTicket(_changeRecordOwnerPayload, ticket);
-            _changeRecordOwnerPayload = new ApplicationToken(_changeRecordOwnerPayload, appToken);
-            _changeRecordOwnerPayload = new WrapPayload(_changeRecordOwnerPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._changeRecordOwnerPayload = new ChangeRecordOwnerPayload(rid, newOwner);
+            this._changeRecordOwnerPayload = new ApplicationTicket(this._changeRecordOwnerPayload, ticket);
+            this._changeRecordOwnerPayload = new ApplicationToken(this._changeRecordOwnerPayload, appToken);
+            this._changeRecordOwnerPayload = new WrapPayload(this._changeRecordOwnerPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _changeRecordOwnerPayload.GetXmlPayload();
+                return this._changeRecordOwnerPayload.GetXmlPayload();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

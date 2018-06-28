@@ -5,11 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class CreateTablePayload : Payload
     {
         private readonly string _tName;
@@ -39,15 +40,15 @@ namespace Intuit.QuickBase.Core.Payload
 
         internal CreateTablePayload(Builder builder)
         {
-            _tName = builder.TName;
-            _pNoun = builder.PNoun;
+            this._tName = builder.TName;
+            this._pNoun = builder.PNoun;
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(!String.IsNullOrEmpty(_tName) ? String.Format("<tname>{0}</tname>", _tName) : String.Empty);
-            sb.Append(!String.IsNullOrEmpty(_pNoun) ? String.Format("<pnoun>{0}</pnoun>", _pNoun) : String.Empty);
+            if (!string.IsNullOrEmpty(this._tName)) sb.Append(new XElement("tname", this._tName));
+            if (!string.IsNullOrEmpty(this._pNoun)) sb.Append(new XElement("pnoun", this._pNoun));
             return sb.ToString();
         }
     }

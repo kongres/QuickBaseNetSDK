@@ -5,12 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Xml.Linq;
+
     internal class FieldChoicesPayload : Payload
     {
         private int _fid;
@@ -24,31 +26,31 @@ namespace Intuit.QuickBase.Core.Payload
 
         private int Fid
         {
-            get { return _fid; }
+            get { return this._fid; }
             set
             {
                 if (value < 1) throw new ArgumentException("fid");
-                _fid = value;
+                this._fid = value;
             }
         }
 
         private List<string> Choices
         {
-            get { return _choices; }
+            get { return this._choices; }
             set
             {
                 if (value == null) throw new ArgumentNullException("choices");
-                _choices = value;
+                this._choices = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
             var sb = new StringBuilder();
-            sb.Append(String.Format("<fid>{0}</fid>", Fid));
+            sb.Append(new XElement("fid", Fid));
             foreach(var choice in Choices)
             {
-                sb.Append(String.Format("<choice>{0}</choice>", choice));
+                sb.Append(new XElement("choice", choice));
             }
             return sb.ToString();
         }

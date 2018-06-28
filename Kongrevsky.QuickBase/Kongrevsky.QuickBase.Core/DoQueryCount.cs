@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class DoQueryCount : IQObject
     {
         private const string QUICKBASE_ACTION = "API_DoQueryCount";
@@ -70,22 +71,22 @@ namespace Intuit.QuickBase.Core
 
         private DoQueryCount(Builder builder)
         {
-            _doQueryCountPayload = new DoQueryCountPayload.Builder()
+            this._doQueryCountPayload = new DoQueryCountPayload.Builder()
                 .SetQuery(builder.Query)
                 .SetQid(builder.Qid)
                 .SetQName(builder.QName)
                 .Build();
-            _doQueryCountPayload = new ApplicationTicket(_doQueryCountPayload, builder.Ticket);
-            _doQueryCountPayload = new ApplicationToken(_doQueryCountPayload, builder.AppToken);
-            _doQueryCountPayload = new WrapPayload(_doQueryCountPayload);
-            _uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+            this._doQueryCountPayload = new ApplicationTicket(this._doQueryCountPayload, builder.Ticket);
+            this._doQueryCountPayload = new ApplicationToken(this._doQueryCountPayload, builder.AppToken);
+            this._doQueryCountPayload = new WrapPayload(this._doQueryCountPayload);
+            this._uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _doQueryCountPayload.GetXmlPayload();
+                return this._doQueryCountPayload.GetXmlPayload();
             }
         }
 
@@ -93,7 +94,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

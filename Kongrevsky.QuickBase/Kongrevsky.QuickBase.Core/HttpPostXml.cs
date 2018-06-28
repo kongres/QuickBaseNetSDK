@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Xml.XPath;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.IO;
+    using System.Net;
+    using System.Text;
+    using System.Xml.XPath;
+
     internal class HttpPostXml : HttpPost
     {
         private const string CONTENT_TYPE = "application/xml";
@@ -21,6 +22,7 @@ namespace Intuit.QuickBase.Core
         internal override void Post(IQObject qObject)
         {
             var bytes = Encoding.UTF8.GetBytes(qObject.XmlPayload);
+            //File.AppendAllText(@"C:\Temp\QBDebugLog.txt", "**Sent->>" + qObject.Uri + " " + QUICKBASE_HEADER + qObject.Action + "\r\n" + qObject.XmlPayload + "\r\n");
             Stream requestStream = null;
             WebResponse webResponse = null;
             Stream responseStream = null;
@@ -30,7 +32,7 @@ namespace Intuit.QuickBase.Core
             {
                 var request = (HttpWebRequest)WebRequest.Create(qObject.Uri);
                 request.Method = METHOD;
-                request.ProtocolVersion = HttpVersion.Version10;
+                request.ProtocolVersion = HttpVersion.Version11;
                 request.ContentType = CONTENT_TYPE;
                 request.ContentLength = bytes.Length;
                 request.KeepAlive = false;
@@ -43,12 +45,13 @@ namespace Intuit.QuickBase.Core
                 webResponse = request.GetResponse();
                 responseStream = webResponse.GetResponseStream();
                 xml = new XPathDocument(responseStream);
+                //File.AppendAllText(@"C:\Temp\QBDebugLog.txt", "**Received-<<\r\n" + xml.CreateNavigator().InnerXml + "\r\n");
             }
             finally
             {
-                if (requestStream != null) requestStream.Close();
-                if (responseStream != null) responseStream.Close();
-                if (webResponse != null) webResponse.Close();
+                requestStream?.Close();
+                responseStream?.Close();
+                webResponse?.Close();
             }
         
             Http.CheckForException(xml);

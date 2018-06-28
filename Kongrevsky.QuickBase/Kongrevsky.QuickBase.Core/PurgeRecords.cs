@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// Use this call carefully. If you do not supply a query parameter (query or qid or qname), ALL of the table records 
     /// will be deleted! If you supply an empty query parameter (&lt;query/&gt;, or &lt;qid/&gt; or &lt;qname/&gt;) all of 
@@ -82,22 +83,22 @@ namespace Intuit.QuickBase.Core
 
         private PurgeRecords(Builder builder)
         {
-            _purgeRecordsPayload = new PurgeRecordsPayload.Builder()
+            this._purgeRecordsPayload = new PurgeRecordsPayload.Builder()
                 .SetQuery(builder.Query)
                 .SetQid(builder.Qid)
                 .SetQName(builder.QName)
                 .Build();
-            _purgeRecordsPayload = new ApplicationTicket(_purgeRecordsPayload, builder.Ticket);
-            _purgeRecordsPayload = new ApplicationToken(_purgeRecordsPayload, builder.AppToken);
-            _purgeRecordsPayload = new WrapPayload(_purgeRecordsPayload);
-            _uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+            this._purgeRecordsPayload = new ApplicationTicket(this._purgeRecordsPayload, builder.Ticket);
+            this._purgeRecordsPayload = new ApplicationToken(this._purgeRecordsPayload, builder.AppToken);
+            this._purgeRecordsPayload = new WrapPayload(this._purgeRecordsPayload);
+            this._uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _purgeRecordsPayload.GetXmlPayload();
+                return this._purgeRecordsPayload.GetXmlPayload();
             }
         }
 
@@ -105,7 +106,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

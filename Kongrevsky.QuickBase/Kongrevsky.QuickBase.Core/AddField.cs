@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// You invoke this call on a table-level dbid to add a new field to the table 
     /// you specify. After you add the field, you’ll need to use 
@@ -58,17 +59,17 @@ namespace Intuit.QuickBase.Core
 
         private void CommonConstruction(string ticket, string appToken, string accountDomain, string dbid, Payload.Payload payload)
         {
-            _addFieldPayload = new ApplicationTicket(payload, ticket);
-            _addFieldPayload = new ApplicationToken(_addFieldPayload, appToken);
-            _addFieldPayload = new WrapPayload(_addFieldPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._addFieldPayload = new ApplicationTicket(payload, ticket);
+            this._addFieldPayload = new ApplicationToken(this._addFieldPayload, appToken);
+            this._addFieldPayload = new WrapPayload(this._addFieldPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _addFieldPayload.GetXmlPayload();
+                return this._addFieldPayload.GetXmlPayload();
             }
         }
 
@@ -76,7 +77,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

@@ -5,12 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     /// <summary>
     /// If you invoke this call on an application-level dbid, it returns metadata information about the application, 
     /// such as any DBVars created for it and all child table dbids as well. If you invoke this call on a table-level 
@@ -32,18 +33,18 @@ namespace Intuit.QuickBase.Core
         /// <param name="dbid">Supply application-level or table-level dbid.</param>
         public GetSchema(string ticket, string appToken, string accountDomain, string dbid)
         {
-            _getRecordInfoPayload = new GetSchemaPayload();
-            _getRecordInfoPayload = new ApplicationTicket(_getRecordInfoPayload, ticket);
-            _getRecordInfoPayload = new ApplicationToken(_getRecordInfoPayload, appToken);
-            _getRecordInfoPayload = new WrapPayload(_getRecordInfoPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._getRecordInfoPayload = new GetSchemaPayload();
+            this._getRecordInfoPayload = new ApplicationTicket(this._getRecordInfoPayload, ticket);
+            this._getRecordInfoPayload = new ApplicationToken(this._getRecordInfoPayload, appToken);
+            this._getRecordInfoPayload = new WrapPayload(this._getRecordInfoPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _getRecordInfoPayload.GetXmlPayload();
+                return this._getRecordInfoPayload.GetXmlPayload();
             }
         }
 
@@ -51,7 +52,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

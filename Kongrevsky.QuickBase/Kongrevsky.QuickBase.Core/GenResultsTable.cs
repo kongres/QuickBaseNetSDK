@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class GenResultsTable : IQObject
     {
         private const string QUICKBASE_ACTION = "API_GenResultsTable";
@@ -108,7 +109,7 @@ namespace Intuit.QuickBase.Core
 
         private GenResultsTable(Builder builder)
         {
-            _doQueryPayload = new DoQueryPayload.Builder()
+            this._doQueryPayload = new DoQueryPayload.Builder()
                 .SetQuery(builder.Query)
                 .SetQid(builder.Qid)
                 .SetQName(builder.QName)
@@ -117,17 +118,17 @@ namespace Intuit.QuickBase.Core
                 .SetFmt(builder.Fmt)
                 .SetOptions(builder.Options)
                 .Build();
-            _doQueryPayload = new ApplicationTicket(_doQueryPayload, builder.Ticket);
-            _doQueryPayload = new ApplicationToken(_doQueryPayload, builder.AppToken);
-            _doQueryPayload = new WrapPayload(_doQueryPayload);
-            _uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
+            this._doQueryPayload = new ApplicationTicket(this._doQueryPayload, builder.Ticket);
+            this._doQueryPayload = new ApplicationToken(this._doQueryPayload, builder.AppToken);
+            this._doQueryPayload = new WrapPayload(this._doQueryPayload);
+            this._uri = new QUriDbid(builder.AccountDomain, builder.Dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _doQueryPayload.GetXmlPayload();
+                return this._doQueryPayload.GetXmlPayload();
             }
         }
 
@@ -135,7 +136,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

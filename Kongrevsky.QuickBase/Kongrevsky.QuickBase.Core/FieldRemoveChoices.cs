@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System.Collections.Generic;
-using System.Xml.XPath;
-using Intuit.QuickBase.Core.Payload;
-using Intuit.QuickBase.Core.Uri;
 
-namespace Intuit.QuickBase.Core
+namespace Kongrevsky.QuickBase.Core
 {
+    using System.Collections.Generic;
+    using System.Xml.XPath;
+    using Kongrevsky.QuickBase.Core.Payload;
+    using Kongrevsky.QuickBase.Core.Uri;
+
     public class FieldRemoveChoices : IQObject
     {
         private const string QUICKBASE_ACTION = "API_FieldRemoveChoices";
@@ -20,18 +21,18 @@ namespace Intuit.QuickBase.Core
 
         public FieldRemoveChoices(string ticket, string appToken, string accountDomain, string dbid, int fid, List<string> choices)
         {
-            _fieldAddChoicesPayload = new FieldChoicesPayload(fid, choices);
-            _fieldAddChoicesPayload = new ApplicationTicket(_fieldAddChoicesPayload, ticket);
-            _fieldAddChoicesPayload = new ApplicationToken(_fieldAddChoicesPayload, appToken);
-            _fieldAddChoicesPayload = new WrapPayload(_fieldAddChoicesPayload);
-            _uri = new QUriDbid(accountDomain, dbid);
+            this._fieldAddChoicesPayload = new FieldChoicesPayload(fid, choices);
+            this._fieldAddChoicesPayload = new ApplicationTicket(this._fieldAddChoicesPayload, ticket);
+            this._fieldAddChoicesPayload = new ApplicationToken(this._fieldAddChoicesPayload, appToken);
+            this._fieldAddChoicesPayload = new WrapPayload(this._fieldAddChoicesPayload);
+            this._uri = new QUriDbid(accountDomain, dbid);
         }
 
         public string XmlPayload
         {
             get
             {
-                return _fieldAddChoicesPayload.GetXmlPayload();
+                return this._fieldAddChoicesPayload.GetXmlPayload();
             }
         }
 
@@ -39,7 +40,7 @@ namespace Intuit.QuickBase.Core
         {
             get
             {
-                return _uri.GetQUri();
+                return this._uri.GetQUri();
             }
         }
 

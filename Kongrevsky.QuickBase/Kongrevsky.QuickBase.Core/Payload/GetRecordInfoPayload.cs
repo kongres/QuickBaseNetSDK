@@ -5,10 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Xml.Linq;
+
     internal class GetRecordInfoPayload : Payload
     {
         private int _rid;
@@ -20,17 +22,17 @@ namespace Intuit.QuickBase.Core.Payload
 
         private int Rid
         {
-            get { return _rid; }
+            get { return this._rid; }
             set
             {
                 if (value < 1) throw new ArgumentException("rid");
-                _rid = value;
+                this._rid = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
-            return String.Format("<rid>{0}</rid>", Rid);
+            return new XElement("rid", Rid).ToString();
         }
     }
 }

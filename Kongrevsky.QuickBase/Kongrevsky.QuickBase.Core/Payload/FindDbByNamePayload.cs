@@ -5,10 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  */
-using System;
 
-namespace Intuit.QuickBase.Core.Payload
+namespace Kongrevsky.QuickBase.Core.Payload
 {
+    using System;
+    using System.Xml.Linq;
+
     internal class FindDbByNamePayload : Payload
     {
         private string _dbName;
@@ -20,18 +22,18 @@ namespace Intuit.QuickBase.Core.Payload
 
         private string DbName
         {
-            get { return _dbName; }
+            get { return this._dbName; }
             set
             {
                 if (value == null) throw new ArgumentNullException("dbName");
                 if (value.Trim() == String.Empty) throw new ArgumentException("dbName");
-                _dbName = value;
+                this._dbName = value;
             }
         }
 
         internal override string GetXmlPayload()
         {
-            return String.Format("<dbname>{0}</dbname>", DbName);
+            return new XElement("dbname", DbName).ToString();
         }
     }
 }

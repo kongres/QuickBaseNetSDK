@@ -90,26 +90,24 @@ namespace Kongrevsky.QuickBase.Client
             get
             {
                 // Get field location with column index
-                var qField = new QField(index);
-                var fieldIndex = _fields.IndexOf(qField);
+                var fieldIndex = this._fields.IndexOf(new QField(Columns[index].ColumnId));
 
                 if (fieldIndex == -1)
                 {
                     //make null field
                     CreateNewField(index, null, false);
-                    fieldIndex = _fields.IndexOf(qField);
+                    fieldIndex = this._fields.IndexOf(new QField(Columns[index].ColumnId));
                 }
                 // Return field with column index
-                var field = this._fields[fieldIndex];
-                return field.Value;
+                return this._fields[fieldIndex].Value;
             }
 
             set
             {
                 // Get field location with column index
-                var fieldIndex = _fields.IndexOf(new QField(index));
+                var fieldIndex = this._fields.IndexOf(new QField(Columns[index].ColumnId));
 
-                if (fieldIndex > -1)
+                if(fieldIndex > -1)
                 {
                     SetExistingField(index, fieldIndex, value);
                 }

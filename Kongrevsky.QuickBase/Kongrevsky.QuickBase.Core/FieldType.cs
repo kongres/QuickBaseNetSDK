@@ -127,6 +127,11 @@ namespace Kongrevsky.QuickBase.Core
         /// <summary>
         /// Project predecessor
         /// </summary>
-        predecessor
+        predecessor,
+
+        /// <summary>
+        /// Multi Text
+        /// </summary>
+        multitext
     }
 }

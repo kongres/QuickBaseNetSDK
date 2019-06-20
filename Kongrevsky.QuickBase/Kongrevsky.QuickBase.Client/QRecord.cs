@@ -85,18 +85,19 @@ namespace Kongrevsky.QuickBase.Client
             }            
         }
 
-        public object this[int index]
+        public object this[IQColumn column]
         {
             get
             {
                 // Get field location with column index
-                var fieldIndex = this._fields.IndexOf(new QField(Columns[index].ColumnId));
+                var qField = new QField(column.ColumnId);
+                var fieldIndex = this._fields.IndexOf(qField);
 
                 if (fieldIndex == -1)
                 {
                     //make null field
-                    CreateNewField(index, null, false);
-                    fieldIndex = this._fields.IndexOf(new QField(Columns[index].ColumnId));
+                    CreateNewField(column.ColumnId, null, false);
+                    fieldIndex = this._fields.IndexOf(qField);
                 }
                 // Return field with column index
                 return this._fields[fieldIndex].Value;
@@ -105,15 +106,49 @@ namespace Kongrevsky.QuickBase.Client
             set
             {
                 // Get field location with column index
-                var fieldIndex = this._fields.IndexOf(new QField(Columns[index].ColumnId));
+                var fieldIndex = this._fields.IndexOf(new QField(column.ColumnId));
 
                 if(fieldIndex > -1)
                 {
-                    SetExistingField(index, fieldIndex, value);
+                    SetExistingField(column.ColumnId, fieldIndex, value);
                 }
                 else
                 {
-                    CreateNewField(index, value, false);
+                    CreateNewField(column.ColumnId, value, false);
+                }
+            }
+        }
+
+        public object this[int columnId]
+        {
+            get
+            {
+                // Get field location with column index
+                var qField = new QField(columnId);
+                var fieldIndex = this._fields.IndexOf(qField);
+
+                if (fieldIndex == -1)
+                {
+                    //make null field
+                    CreateNewField(columnId, null, false);
+                    fieldIndex = this._fields.IndexOf(qField);
+                }
+                // Return field with column index
+                return this._fields[fieldIndex].Value;
+            }
+
+            set
+            {
+                // Get field location with column index
+                var fieldIndex = this._fields.IndexOf(new QField(columnId));
+
+                if(fieldIndex > -1)
+                {
+                    SetExistingField(columnId, fieldIndex, value);
+                }
+                else
+                {
+                    CreateNewField(columnId, value, false);
                 }
             }
         }

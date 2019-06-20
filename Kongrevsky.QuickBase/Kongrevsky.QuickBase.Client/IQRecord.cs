@@ -13,7 +13,8 @@ namespace Kongrevsky.QuickBase.Client
         RecordState RecordState { get; }
         bool UncleanState { get; }
         bool IsOnServer { get; }
-        object this[int index] { get; set; }
+        object this[IQColumn column] { get; set; }
+        object this[int columnId] { get; set; }
         object this[string columnName] { get; set; }
         void AcceptChanges();
         void UploadFile(string columnName, string filePath);

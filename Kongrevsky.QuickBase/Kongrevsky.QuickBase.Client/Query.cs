@@ -24,5 +24,10 @@ namespace Kongrevsky.QuickBase.Client
         {
             return this._queryStrings.Aggregate(string.Empty, (current, query) => current + query.ToString());
         }
+
+        public int Count()
+        {
+            return this._queryStrings.Count;
+        }
     }
 }

@@ -73,7 +73,7 @@ namespace Kongrevsky.QuickBase.Client
 
         public int KeyCIdx { get; private set; }
 
-        private static readonly string[] QuerySeparator = {"}OR{"};
+        private static readonly string[] QuerySeparator = { "}OR{" };
         private static readonly Regex QueryCheckRegex = new Regex(@"[\)}]AND[\({]");
 
         // Methods
@@ -342,6 +342,7 @@ namespace Kongrevsky.QuickBase.Client
 
         public void QueryPaged(int[] clist, int pageSize)
         {
+            Clear();
             var colList = GetColumnList(clist);
 
             var count = GetServerRecordCount();
@@ -357,24 +358,27 @@ namespace Kongrevsky.QuickBase.Client
             }
         }
 
-        public void QueryByIds(int[] clist, int fieldId, IEnumerable<string> values)
+        public void QueryByIds(Query query, int[] clist, int fieldId, IEnumerable<string> values)
         {
+            Clear();
             var colList = GetColumnList(clist);
 
+            var queryCount = 100 - (query?.Count() ?? 0);
             var groupedIds = values
                     .Select((x, i) => new { Index = i, Value = x })
-                    .GroupBy(x => x.Index / 100)
+                    .GroupBy(x => x.Index / queryCount)
                     .Select(x => x.Select(v => v.Value).ToList())
                     .ToList();
 
             foreach (var range in groupedIds)
             {
-                var query = new Query();
+                var q = new Query();
                 foreach (var id in range)
-                    query.Add(new QueryStrings(fieldId, ComparisonOperator.EX, id, id == range.Last() ? LogicalOperator.NONE : LogicalOperator.OR));
+                    q.Add(new QueryStrings(fieldId, ComparisonOperator.EX, id, id == range.Last() ? LogicalOperator.NONE : LogicalOperator.OR));
 
+                var val = query == null ? q.ToString() : query + LogicalOperator.AND.ToString("F") + $"({q})";
                 var doQuery = new DoQuery.Builder(Application.Client.Ticket, Application.Token, Application.Client.AccountDomain, TableId)
-                        .SetQuery(query.ToString())
+                        .SetQuery(val)
                         .SetCList(colList)
                         .SetFmt(true)
                         .Build();
@@ -382,9 +386,19 @@ namespace Kongrevsky.QuickBase.Client
             }
         }
 
+        public void QueryByIds(Query query, int[] clist, int fieldId, IEnumerable<int> values)
+        {
+            QueryByIds(query, clist, fieldId, values.Select(x => x.ToString()));
+        }
+
+        public void QueryByIds(int[] clist, int fieldId, IEnumerable<string> values)
+        {
+            QueryByIds(null, clist, fieldId, values);
+        }
+
         public void QueryByIds(int[] clist, int fieldId, IEnumerable<int> values)
         {
-            QueryByIds(clist,fieldId,values?.Select(x=>x.ToString()));
+            QueryByIds(clist, fieldId, values?.Select(x => x.ToString()));
         }
 
         public void Query(Query query)

@@ -34,6 +34,8 @@ namespace Kongrevsky.QuickBase.Client
         void Query(int[] clist);
         void Query(int[] clist, string options);
         void QueryPaged(int[] clist, int pageSize);
+        void QueryByIds(Query query, int[] clist, int fieldId, IEnumerable<string> values);
+        void QueryByIds(Query query, int[] clist, int fieldId, IEnumerable<int> values);
         void QueryByIds(int[] clist, int fieldId, IEnumerable<string> values);
         void QueryByIds(int[] clist, int fieldId, IEnumerable<int> values);
         void Query(Query query);

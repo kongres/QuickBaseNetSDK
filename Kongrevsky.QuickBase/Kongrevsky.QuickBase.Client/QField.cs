@@ -271,13 +271,13 @@ namespace Kongrevsky.QuickBase.Client
 
         private static DateTime ConvertQBMillisecondsToDateTime(string milliseconds)
         {
-            DateTime dtu = new DateTime(long.Parse(milliseconds) * TimeSpan.TicksPerMillisecond + qbTSOffset.Ticks, DateTimeKind.Utc);
-            return dtu.ToLocalTime();
+            var dtu = new DateTime(long.Parse(milliseconds) * TimeSpan.TicksPerMillisecond + qbTSOffset.Ticks, DateTimeKind.Utc);
+            return dtu;
         }
         private static DateTime ConvertQBMillisecondsToDate(string milliseconds)
         {
-            DateTime dtu = new DateTime(long.Parse(milliseconds) * TimeSpan.TicksPerMillisecond + qbTSOffset.Ticks, DateTimeKind.Utc);
-            return dtu.ToLocalTime().Date;
+            var dtu = new DateTime(long.Parse(milliseconds) * TimeSpan.TicksPerMillisecond + qbTSOffset.Ticks, DateTimeKind.Utc);
+            return dtu.Date;
         }
         private static TimeSpan ConvertQBDurationToTimeSpan(string milliseconds)
         {
